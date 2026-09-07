@@ -15,7 +15,79 @@ export type Project = {
   stack: string[];
   links: { live?: string; github?: string; paper?: string };
   media: { type: "image" | "video"; src: string }[];
+  featured: boolean;
 };
+
+export type Profile = {
+  name: string;
+  email: string;
+  github: string;
+  linkedin: string;
+  resume: string;
+};
+
+export const profile: Profile = {
+  name: "Dheeraj Reddy",
+  email: "hello@dheerajdev.space",
+  github: "https://github.com/YadamDheerajReddy",
+  linkedin: "https://www.linkedin.com/in/yadam-dheeraj-reddy-69a588384/",
+  resume: "/Dheeraj-Reddy-Resume.pdf",
+};
+
+export type SkillGroup = {
+  category: string;
+  items: string[];
+};
+
+export const skillGroups: SkillGroup[] = [
+  {
+    category: "Languages & Frameworks",
+    items: ["JavaScript", "TypeScript", "React", "Next.js", "React Native"],
+  },
+  {
+    category: "Backend & Data",
+    items: ["Supabase", "PostgreSQL", "REST APIs", "Rust"],
+  },
+  {
+    category: "AI / ML",
+    items: ["Python", "Machine Learning", "Local-first AI", "Ollama"],
+  },
+  {
+    category: "Design & Product",
+    items: ["Brand Systems", "UI/UX Design", "Product Specs", "Content Architecture"],
+  },
+];
+
+export type ProcessStep = {
+  step: string;
+  title: string;
+  description: string;
+};
+
+export const processSteps: ProcessStep[] = [
+  {
+    step: "01",
+    title: "Discover",
+    description:
+      "A short audit of what exists today and what the project actually needs, so scope is grounded in reality before anything is designed.",
+  },
+  {
+    step: "02",
+    title: "Design & Spec",
+    description:
+      "A written spec and design direction you can review and revise before a single line of production code gets written.",
+  },
+  {
+    step: "03",
+    title: "Build",
+    description: "Development in visible stages, not one long silence before a reveal.",
+  },
+  {
+    step: "04",
+    title: "Launch",
+    description: "Deployment, DNS, hosting, and a handoff you can actually maintain.",
+  },
+];
 
 export const projects: Project[] = [
   {
@@ -30,6 +102,7 @@ export const projects: Project[] = [
     stack: ["TypeScript", "Rust", "React", "CEF / Chromium"],
     links: { github: "https://github.com/YadamDheerajReddy/Strata-Browser" },
     media: [],
+    featured: false,
   },
   {
     slug: "aurafit-ai",
@@ -43,6 +116,7 @@ export const projects: Project[] = [
     stack: ["TypeScript", "Tauri", "React", "Local AI"],
     links: { github: "https://github.com/YadamDheerajReddy/aurafit-ai" },
     media: [],
+    featured: true,
   },
   {
     slug: "exam-guard",
@@ -59,6 +133,7 @@ export const projects: Project[] = [
       live: "https://exam-guard-two.vercel.app",
     },
     media: [],
+    featured: true,
   },
   {
     slug: "echo",
@@ -75,6 +150,7 @@ export const projects: Project[] = [
         "https://github.com/YadamDheerajReddy/ECHO-Everyday_Computing_Human_Operator",
     },
     media: [],
+    featured: true,
   },
   {
     slug: "tonys-angel-tattooz",
@@ -88,6 +164,7 @@ export const projects: Project[] = [
     stack: ["React", "Vite"],
     links: { live: "https://tonysangeltattooz.in" },
     media: [],
+    featured: true,
   },
   {
     slug: "flexnect",
@@ -101,6 +178,7 @@ export const projects: Project[] = [
     stack: ["React Native", "Expo", "Supabase"],
     links: {},
     media: [],
+    featured: false,
   },
   {
     slug: "kinetx-labs-evolyn",
@@ -114,6 +192,7 @@ export const projects: Project[] = [
     stack: ["Brand Systems", "Product Design", "Content Architecture"],
     links: {},
     media: [],
+    featured: true,
   },
   {
     slug: "ml-based-firewall",
@@ -127,5 +206,6 @@ export const projects: Project[] = [
     stack: ["Python", "Machine Learning", "Network Security"],
     links: {},
     media: [],
+    featured: false,
   },
 ];

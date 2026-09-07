@@ -1,21 +1,29 @@
-import { projects } from "@/lib/content";
+import { Nav } from "@/components/nav/Nav";
+import { Hero } from "@/components/hero/Hero";
+import { About } from "@/components/about/About";
+import { Work } from "@/components/work/Work";
+import { Skills } from "@/components/skills/Skills";
+import { Process } from "@/components/process/Process";
+import { Contact } from "@/components/contact/Contact";
 
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center gap-6 px-6 text-center">
-      <p className="text-mono font-mono tracking-[0.08em] text-[var(--accent-primary)] uppercase">
-        {"/ Phase 0"}
-      </p>
-      <h1 className="font-signature text-hero-name text-[var(--text-primary)] italic">
-        Dheeraj
-      </h1>
-      <p className="font-body text-body-lg max-w-xl text-[var(--text-secondary)]">
-        Full-stack developer who ships real products, from AI-powered apps to production
-        client websites.
-      </p>
-      <p className="text-mono font-mono text-[var(--text-secondary)]">
-        {projects.length} projects loaded from the content model
-      </p>
-    </main>
+    <>
+      <a
+        href="#top"
+        className="focus:rounded-button focus:bg-ember focus:text-ink sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2"
+      >
+        Skip to content
+      </a>
+      <Nav />
+      <main>
+        <Hero />
+        <About />
+        <Work />
+        <Skills />
+        <Process />
+        <Contact />
+      </main>
+    </>
   );
 }

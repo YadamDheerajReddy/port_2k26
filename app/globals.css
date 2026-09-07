@@ -78,6 +78,14 @@ body {
   animation: nav-logo-breathe 4s ease-in-out infinite;
 }
 
+/* PortraitReveal.tsx: the source photos are hard-cropped at the bottom
+   (a flat rectangular edge visible against the page background). Fades
+   the bottom ~20% to transparent so it blends instead of looking cut off. */
+.portrait-fade-mask {
+  mask-image: linear-gradient(to bottom, black 78%, transparent 98%);
+  -webkit-mask-image: linear-gradient(to bottom, black 78%, transparent 98%);
+}
+
 /* PortraitReveal.tsx: soft circle tracking the cursor (position set on the
    node directly via --reveal-x/--reveal-y, mousemove is too frequent for
    React state) that unmasks the alternate portrait underneath. */

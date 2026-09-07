@@ -35,31 +35,40 @@ export function PortraitReveal() {
       onMouseLeave={() => setHovering(false)}
       className="relative"
     >
-      <Image
-        src="/images/me.png"
-        alt="Dheeraj Reddy"
-        width={1145}
-        height={1374}
-        priority
-        className="relative z-0 h-auto w-full"
-      />
+      {/*
+        portrait-fade-mask: the source photos are hard-cropped at the
+        bottom (a flat rectangular edge), which read as visibly "cut off"
+        against the page background. This fades the bottom ~20% to
+        transparent instead. Scoped to just the image layers, not the
+        tagline below, which needs to stay fully legible.
+      */}
+      <div className="portrait-fade-mask relative">
+        <Image
+          src="/images/me.png"
+          alt="Dheeraj Reddy"
+          width={1145}
+          height={1374}
+          priority
+          className="relative z-0 h-auto w-full"
+        />
 
-      {pointerFine ? (
-        <div
-          ref={revealRef}
-          aria-hidden
-          className="portrait-reveal-mask pointer-events-none absolute inset-0 z-[1] transition-opacity duration-300 ease-[var(--ease-snap)]"
-          style={{ opacity: hovering ? 1 : 0 }}
-        >
-          <Image
-            src="/images/me2.png"
-            alt=""
-            width={1145}
-            height={1374}
-            className="h-auto w-full"
-          />
-        </div>
-      ) : null}
+        {pointerFine ? (
+          <div
+            ref={revealRef}
+            aria-hidden
+            className="portrait-reveal-mask pointer-events-none absolute inset-0 z-[1] transition-opacity duration-300 ease-[var(--ease-snap)]"
+            style={{ opacity: hovering ? 1 : 0 }}
+          >
+            <Image
+              src="/images/me2.png"
+              alt=""
+              width={1145}
+              height={1374}
+              className="h-auto w-full"
+            />
+          </div>
+        ) : null}
+      </div>
 
       {/*
         Legibility fix: subtle dark glow behind the tagline so it holds up

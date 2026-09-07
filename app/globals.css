@@ -78,6 +78,26 @@ body {
   animation: nav-logo-breathe 4s ease-in-out infinite;
 }
 
+/* PortraitReveal.tsx: soft circle tracking the cursor (position set on the
+   node directly via --reveal-x/--reveal-y, mousemove is too frequent for
+   React state) that unmasks the alternate portrait underneath. */
+.portrait-reveal-mask {
+  --reveal-x: 50%;
+  --reveal-y: 50%;
+  mask-image: radial-gradient(
+    circle 90px at var(--reveal-x) var(--reveal-y),
+    black 0%,
+    black 55%,
+    transparent 100%
+  );
+  -webkit-mask-image: radial-gradient(
+    circle 90px at var(--reveal-x) var(--reveal-y),
+    black 0%,
+    black 55%,
+    transparent 100%
+  );
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;

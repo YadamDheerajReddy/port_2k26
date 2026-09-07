@@ -1,7 +1,7 @@
-import Image from "next/image";
 import { Button } from "@/components/ui/Button";
 import { MagneticWrap } from "@/components/ui/MagneticWrap";
 import { IntroRevealGroup, IntroRevealItem } from "@/components/intro/IntroReveal";
+import { PortraitReveal } from "@/components/hero/PortraitReveal";
 
 const PROOF = [
   "TCS Workforce Software Consultant",
@@ -50,17 +50,7 @@ export function Hero() {
             getBoundingClientRect at both extremes, not just calculated).
           */}
           <div className="absolute top-1/2 left-1/2 z-10 w-[clamp(180px,24vw,320px)] -translate-x-1/2 -translate-y-1/2">
-            <Image
-              src="/images/me.png"
-              alt="Dheeraj Reddy"
-              width={1145}
-              height={1374}
-              priority
-              className="h-auto w-full"
-            />
-            <p className="font-body absolute inset-x-4 bottom-2 text-xs text-[var(--text-secondary)] opacity-90 sm:inset-x-6 sm:bottom-[10%] sm:text-base">
-              A full-stack developer crafting elegant solutions to complex problems.
-            </p>
+            <PortraitReveal />
           </div>
         </IntroRevealItem>
 

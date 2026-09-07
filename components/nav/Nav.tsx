@@ -42,8 +42,8 @@ export function Nav() {
 
   return (
     <header className="fixed inset-x-0 top-4 z-50 flex justify-center px-4">
-      <nav className="bg-ink/95 flex w-full max-w-[1400px] items-center justify-between gap-6 rounded-full border border-[var(--border-subtle)] px-6 py-3 backdrop-blur-[16px]">
-        <div className="flex items-center">
+      <nav className="bg-ink/95 grid w-full max-w-[1400px] grid-cols-[1fr_auto_1fr] items-center gap-6 rounded-full border border-[var(--border-subtle)] px-6 py-3 backdrop-blur-[16px]">
+        <div className="flex items-center justify-self-start">
           {/*
             Always rendered: this is the exact element NameIntro measures
             and lands the animated "DR" monogram on -- same letters, same
@@ -59,7 +59,11 @@ export function Nav() {
           </a>
         </div>
 
-        <div className="hidden items-center gap-8 lg:flex">
+        {/* grid-cols-[1fr_auto_1fr]: this middle column sizes to its own
+            content and sits exactly centered in the bar, unlike the
+            previous flex justify-between, which only centered it when the
+            logo and resume/CTA sections happened to be the same width. */}
+        <div className="hidden items-center gap-8 justify-self-center lg:flex">
           {LINKS.map((link) => {
             const active = activeHref === link.href;
             return (
@@ -85,37 +89,39 @@ export function Nav() {
           })}
         </div>
 
-        <div className="hidden items-center gap-6 lg:flex">
-          <div className="h-6 w-px bg-[var(--border-subtle)]" />
-          <a
-            href={profile.resume}
-            download
-            className="text-label-caps font-ui text-label text-bone hover:text-paper transition-colors duration-[var(--dur-fast)]"
-          >
-            Resume
-          </a>
-          <ChamferButton href="#contact">Get in touch</ChamferButton>
-        </div>
+        <div className="flex items-center gap-6 justify-self-end">
+          <div className="hidden items-center gap-6 lg:flex">
+            <div className="h-6 w-px bg-[var(--border-subtle)]" />
+            <a
+              href={profile.resume}
+              download
+              className="text-label-caps font-ui text-label text-bone hover:text-paper transition-colors duration-[var(--dur-fast)]"
+            >
+              Resume
+            </a>
+            <ChamferButton href="#contact">Get in touch</ChamferButton>
+          </div>
 
-        <button
-          type="button"
-          onClick={() => setMobileOpen((v) => !v)}
-          aria-expanded={mobileOpen}
-          aria-label={mobileOpen ? "Close menu" : "Open menu"}
-          className="text-paper flex h-8 w-8 items-center justify-center lg:hidden"
-        >
-          <span className="relative flex h-3.5 w-4 flex-col justify-between">
-            <span
-              className={`bg-paper h-px w-full transition-transform duration-200 ${mobileOpen ? "translate-y-[6.5px] rotate-45" : ""}`}
-            />
-            <span
-              className={`bg-paper h-px w-full transition-opacity duration-200 ${mobileOpen ? "opacity-0" : ""}`}
-            />
-            <span
-              className={`bg-paper h-px w-full transition-transform duration-200 ${mobileOpen ? "-translate-y-[6.5px] -rotate-45" : ""}`}
-            />
-          </span>
-        </button>
+          <button
+            type="button"
+            onClick={() => setMobileOpen((v) => !v)}
+            aria-expanded={mobileOpen}
+            aria-label={mobileOpen ? "Close menu" : "Open menu"}
+            className="text-paper flex h-8 w-8 items-center justify-center lg:hidden"
+          >
+            <span className="relative flex h-3.5 w-4 flex-col justify-between">
+              <span
+                className={`bg-paper h-px w-full transition-transform duration-200 ${mobileOpen ? "translate-y-[6.5px] rotate-45" : ""}`}
+              />
+              <span
+                className={`bg-paper h-px w-full transition-opacity duration-200 ${mobileOpen ? "opacity-0" : ""}`}
+              />
+              <span
+                className={`bg-paper h-px w-full transition-transform duration-200 ${mobileOpen ? "-translate-y-[6.5px] -rotate-45" : ""}`}
+              />
+            </span>
+          </button>
+        </div>
       </nav>
 
       <AnimatePresence>

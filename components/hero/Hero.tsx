@@ -24,6 +24,17 @@ export function Hero() {
       id="top"
       className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-6 pt-24"
     >
+      {/* Sized with clamp rather than a fixed px value: at a fixed 700px
+          this overwhelmed the whole viewport on mobile instead of reading
+          as a glow specifically behind the name. */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute top-1/2 left-1/2 z-0 h-[clamp(320px,80vw,700px)] w-[clamp(320px,80vw,700px)] -translate-x-1/2 -translate-y-1/2 opacity-50"
+        style={{
+          background: "radial-gradient(circle, #ff4d1a 0%, #ff4d1a 25%, transparent 70%)",
+        }}
+      />
+
       <IntroRevealGroup className="relative flex w-full max-w-4xl flex-col items-center text-center">
         <IntroRevealItem className="relative flex w-full flex-col items-center pb-36">
           <h1

@@ -1,5 +1,6 @@
 import { SectionLabel } from "@/components/ui/SectionLabel";
 import { RevealGroup, RevealItem } from "@/components/motion/Reveal";
+import { AboutSphere } from "@/components/about/AboutSphere";
 
 export function About() {
   return (
@@ -12,10 +13,11 @@ export function About() {
           <SectionLabel>About</SectionLabel>
         </RevealItem>
 
-        <RevealItem>
-          <p className="font-display text-display-2 mt-6 max-w-4xl text-[var(--text-primary)]">
+        <RevealItem className="mt-6 flex items-center justify-between gap-8">
+          <p className="font-display text-display-2 max-w-4xl text-[var(--text-primary)]">
             I like building things that quietly make someone&apos;s day easier.
           </p>
+          <AboutSphere className="hidden h-[220px] w-[220px] shrink-0 md:block" />
         </RevealItem>
 
         <RevealItem className="mt-12 grid gap-8 md:grid-cols-2">

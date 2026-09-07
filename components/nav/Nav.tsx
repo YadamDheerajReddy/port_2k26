@@ -43,22 +43,19 @@ export function Nav() {
   return (
     <header className="fixed inset-x-0 top-4 z-50 flex justify-center px-4">
       <nav className="bg-ink/95 flex w-full max-w-[1400px] items-center justify-between gap-6 rounded-full border border-[var(--border-subtle)] px-6 py-3 backdrop-blur-[16px]">
-        <div className="flex items-center gap-4">
-          <a href="#top" aria-label="Home" className="flex items-center">
-            <NavMark />
-          </a>
-          <div className="hidden h-6 w-px bg-[var(--border-subtle)] sm:block" />
+        <div className="flex items-center">
           {/*
             Always rendered: this is the exact element NameIntro measures
-            and lands the animated "Dheeraj" wordmark on -- same word,
-            same scale family, so the handoff reads as continuous.
+            and lands the animated "DR" monogram on -- same letters, same
+            font (Clash Display), so the handoff reads as continuous.
           */}
           <a
             id="nav-logo"
             href="#top"
-            className="nav-logo-idle-glow text-label-caps font-ui text-label text-paper hidden sm:block"
+            aria-label="Home"
+            className="nav-logo-idle-glow flex items-center"
           >
-            Dheeraj Reddy
+            <NavMark />
           </a>
         </div>
 

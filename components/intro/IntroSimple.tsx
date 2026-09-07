@@ -38,9 +38,9 @@ export function IntroSimple() {
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.4 }}
-        className="font-signature text-hero-name text-paper italic"
+        className="font-display text-display-1 text-paper"
       >
-        Dheeraj
+        DR
       </motion.p>
     </motion.div>
   );

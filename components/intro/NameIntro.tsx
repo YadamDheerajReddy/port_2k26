@@ -11,12 +11,13 @@ const viewBox = `0 ${-nameGlyphsMeta.maxY} ${nameGlyphsMeta.totalWidth} ${viewBo
 
 /**
  * The site's signature moment, Animation_system.md §2. Plays once per fresh
- * session, mode "full" only (IntroProvider), on real Gambetta glyph
- * outlines extracted from the actual font file (lib/name-glyphs.ts):
- * stroke-draw -> ember glow -> fill wash -> scale/translate into the nav
- * logo's real measured position, handing off to the persistent nav + hero
- * content (IntroReveal.tsx) at the same moment. Reduced-motion visitors
- * get IntroSimple's plain fade instead, per Animation_system.md §7.
+ * session, mode "full" only (IntroProvider), on real Clash Display "DR"
+ * glyph outlines extracted from the actual font file (lib/name-glyphs.ts),
+ * matching NavMark.tsx's monogram: stroke-draw -> ember glow -> fill wash
+ * -> scale/translate into the nav logo's real measured position, handing
+ * off to the persistent nav + hero content (IntroReveal.tsx) at the same
+ * moment. Reduced-motion visitors get IntroSimple's plain fade instead,
+ * per Animation_system.md §7.
  */
 export function NameIntro() {
   const { mode, markDone } = useIntro();
@@ -136,7 +137,7 @@ export function NameIntro() {
         style={{ background: "var(--gradient-ember-glow)" }}
       />
 
-      <div ref={svgWrapRef} className="relative w-[min(80vw,900px)]">
+      <div ref={svgWrapRef} className="relative w-[min(50vw,480px)]">
         <svg viewBox={viewBox} className="w-full" aria-hidden>
           {nameGlyphs.map((glyph, i) => (
             <g key={glyph.char + i} transform={`translate(${glyph.x}, 0) scale(1, -1)`}>

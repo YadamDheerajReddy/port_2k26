@@ -14,25 +14,21 @@ export function About() {
 
         <RevealItem>
           <p className="font-display text-display-2 mt-6 max-w-4xl text-[var(--text-primary)]">
-            From an IEEE-published research project to shipping client sites, I build
-            things that work.
+            I like building things that quietly make someone&apos;s day easier.
           </p>
         </RevealItem>
 
         <RevealItem className="mt-12 grid gap-8 md:grid-cols-2">
           <p className="font-body text-body-lg text-[var(--text-secondary)]">
-            I studied Computer Science with a focus on AI and ML at Sathyabama University,
-            where a machine-learning firewall project I built ended up published in IEEE
-            Xplore. That research background still shapes how I approach product work: I
-            care about the mechanism underneath a feature, not just the interface on top
-            of it.
+            My work spans the full stack, from how data moves in the background to what a
+            person sees and clicks on screen. I care about how something works underneath,
+            not just how it looks, because that is what keeps it fast and easy to change
+            later.
           </p>
           <p className="font-body text-body-lg text-[var(--text-secondary)]">
-            Today I work as a Workforce Software Consultant at TCS, and outside of that I
-            run YDR Digital, building and shipping websites for real clients, and build
-            independent products on my own, several of them exploring what it means to
-            build software with AI agents rather than just calling an API. I also led HACK
-            SIST, my university&apos;s computer club, as president.
+            The real difference good software makes is time. A slow process turned
+            automatic, a confusing step turned obvious, a manual task that no longer needs
+            a person. That is what I try to build every time I sit down to code.
           </p>
         </RevealItem>
       </RevealGroup>

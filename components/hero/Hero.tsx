@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/Button";
 import { MagneticWrap } from "@/components/ui/MagneticWrap";
 import { IntroRevealGroup, IntroRevealItem } from "@/components/intro/IntroReveal";
+import { HeroCanvasLoader } from "@/components/three/HeroCanvasLoader";
 
 const PROOF = [
   "TCS Workforce Software Consultant",
@@ -20,6 +21,20 @@ export function Hero() {
         className="pointer-events-none absolute top-1/2 right-0 h-[600px] w-[600px] translate-x-1/3 -translate-y-1/2 opacity-40"
         style={{ background: "var(--gradient-ember-glow)" }}
       />
+
+      {/*
+        Animation_system.md §6: sits behind and to the side, never over the
+        text block. Hidden below 1024px (UI_UX_Brief.md §4) rather than
+        resized into the text's way. Fixed size reserved up front so
+        swapping in the canvas, or falling back to Tier 3, never shifts
+        layout (TRD.md §4.3).
+      */}
+      <div
+        aria-hidden
+        className="absolute top-1/2 right-[-5%] hidden h-[500px] w-[500px] -translate-y-1/2 opacity-90 lg:block"
+      >
+        <HeroCanvasLoader />
+      </div>
 
       <IntroRevealGroup className="relative mx-auto w-full max-w-[1440px]">
         <div className="max-w-3xl">

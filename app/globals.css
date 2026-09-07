@@ -106,6 +106,36 @@ body {
   );
 }
 
+/* Marquee.tsx: content is rendered twice back to back, translating exactly
+   -50% (of the track's own doubled width) loops seamlessly back to the
+   start. Neutralized automatically by the reduced-motion block below,
+   already the site's blanket rule, no separate JS gate needed. Paused on
+   hover: WCAG 2.2.2 requires a way to stop motion running past 5s. */
+@keyframes marquee-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+.marquee-track {
+  animation: marquee-scroll 32s linear infinite;
+}
+.marquee-fade:hover .marquee-track {
+  animation-play-state: paused;
+}
+.marquee-fade {
+  mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 8%,
+    black 92%,
+    transparent
+  );
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;

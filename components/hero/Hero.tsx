@@ -2,13 +2,7 @@ import { Button } from "@/components/ui/Button";
 import { MagneticWrap } from "@/components/ui/MagneticWrap";
 import { IntroRevealGroup, IntroRevealItem } from "@/components/intro/IntroReveal";
 import { PortraitReveal } from "@/components/hero/PortraitReveal";
-
-const PROOF = [
-  "TCS Workforce Software Consultant",
-  "IEEE-published ML research",
-  "Founder, YDR Digital",
-  "President, HACK SIST",
-];
+import { Marquee } from "@/components/hero/Marquee";
 
 /**
  * Single h1 (line-broken, not two separate headings, TRD.md §8's
@@ -78,10 +72,8 @@ export function Hero() {
           </MagneticWrap>
         </IntroRevealItem>
 
-        <IntroRevealItem className="text-mono mt-16 flex flex-wrap justify-center gap-x-8 gap-y-3 border-t border-[var(--border-subtle)] pt-6 font-mono text-[var(--text-secondary)]">
-          {PROOF.map((fact) => (
-            <span key={fact}>{fact}</span>
-          ))}
+        <IntroRevealItem className="mt-16 w-full">
+          <Marquee />
         </IntroRevealItem>
       </IntroRevealGroup>
     </section>

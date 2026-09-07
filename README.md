@@ -26,5 +26,5 @@ npm run build
 
 ## Fonts
 
-Self-hosted Fontshare files are not committed yet, see the Phase 0 setup notes.
-Once added, they belong in `public/fonts/`.
+Self-hosted Fontshare `.woff2` files live in `public/fonts/`, loaded via
+`next/font/local` in `lib/fonts.ts`. Space Mono comes from `next/font/google`.

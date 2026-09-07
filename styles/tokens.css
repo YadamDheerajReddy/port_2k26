@@ -32,13 +32,12 @@
   --ease-snap: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-scroll: linear;
 
-  /* Font families - Typography.md §1. Fallback stacks carry the load until
-     the self-hosted Fontshare files are wired in lib/fonts.ts (Phase 0 pending). */
-  --font-signature: "Gambetta", "Times New Roman", serif;
-  --font-display: "Clash Display", "Arial Black", sans-serif;
-  --font-ui: "Switzer", -apple-system, "Segoe UI", sans-serif;
-  --font-body: "General Sans", -apple-system, "Segoe UI", sans-serif;
-  --font-mono: "Space Mono", "Courier New", monospace;
+  /* Font families - Typography.md §1. CSS vars set by next/font/local in lib/fonts.ts. */
+  --font-signature: var(--font-gambetta), "Times New Roman", serif;
+  --font-display: var(--font-clash-display), "Arial Black", sans-serif;
+  --font-ui: var(--font-switzer), -apple-system, "Segoe UI", sans-serif;
+  --font-body: var(--font-general-sans), -apple-system, "Segoe UI", sans-serif;
+  --font-mono: var(--font-space-mono), "Courier New", monospace;
 
   /* Type scale - Typography.md §3. Fluid between 375px and 1920px viewports. */
   --text-hero-name: clamp(

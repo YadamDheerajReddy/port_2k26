@@ -2,7 +2,15 @@ import { NextResponse } from "next/server";
 import { Resend } from "resend";
 import { profile } from "@/lib/content";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Constructed lazily inside the handler, not at module scope: Resend's
+// constructor throws on a missing key, and Next.js evaluates this module
+// during build-time page-data collection, before any env var is guaranteed
+// to be set (e.g. in CI, where sending isn't needed at all).
+let resend: Resend | undefined;
+function getResendClient() {
+  if (!resend) resend = new Resend(process.env.RESEND_API_KEY);
+  return resend;
+}
 
 const RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000;
 const RATE_LIMIT_MAX = 3;
@@ -58,7 +66,7 @@ export async function POST(request: Request) {
   }
 
   try {
-    await resend.emails.send({
+    await getResendClient().emails.send({
       from: `Portfolio contact form <${profile.email}>`,
       to: profile.email,
       replyTo: email,

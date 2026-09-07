@@ -54,6 +54,14 @@ export function IntroProvider({ children }: { children: React.ReactNode }) {
     } catch {
       // Nothing to persist; the intro will just replay next time. Not worth failing over.
     }
+
+    // Hands off from layout.tsx's blocking script: by now mode/introDone
+    // above are set correctly for this render, so either real content is
+    // already visible (mode stayed "settled") or NameIntro/IntroSimple are
+    // about to cover it themselves. Safe to stop hiding it via the CSS
+    // class either way, whichever mode was decided.
+    document.documentElement.classList.remove("intro-pending");
+
     setDecided(true);
   }, [ready, reducedMotion, decided]);
 

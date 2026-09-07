@@ -21,6 +21,18 @@ body {
   outline-offset: 2px;
 }
 
+/* layout.tsx's INTRO_FLASH_GUARD blocking script adds this before first
+   paint, if the intro is going to play. Hides real content for the brief
+   window between that and IntroProvider's own effect taking over (which
+   removes this class once it has, whichever mode it lands on), instead
+   of a visible flash of the real page before the intro overlay appears
+   on top of it. NameIntro/IntroSimple render nothing at this point
+   regardless (their own mode check is still the SSR-safe default), so
+   only real content needs hiding here. */
+html.intro-pending #site-shell {
+  visibility: hidden;
+}
+
 /* Native cursor stays hidden while CustomCursor.tsx is active, except over
    text inputs, where the native caret is the correct affordance. */
 .custom-cursor-active {

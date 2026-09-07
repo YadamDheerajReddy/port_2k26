@@ -13,6 +13,10 @@ type CursorState = "default" | "link" | "text";
  * reduced motion, per Animation_system.md §7 ("cursor-follow effects are
  * disabled"). Never rendered server-side: mouse position doesn't exist
  * until mount.
+ *
+ * Refined from a flat 2px solid-color ring (read as cheap/clip-art) to a
+ * thinner, softly-glowing ring with a smooth scale+glass transition on
+ * hover instead of an instant color swap.
  */
 export function CustomCursor() {
   const pointerFine = usePointerFine();
@@ -63,6 +67,8 @@ export function CustomCursor() {
 
   if (!active || !visible || state === "text") return null;
 
+  const isLink = state === "link";
+
   return (
     <motion.div
       aria-hidden
@@ -70,13 +76,13 @@ export function CustomCursor() {
       style={{ x: ringX, y: ringY }}
     >
       <div
-        className={`border-acid flex h-6 w-6 items-center justify-center rounded-full border-2 transition-colors duration-150 ${
-          state === "link" ? "bg-ember border-ember" : "bg-transparent"
+        className={`flex items-center justify-center rounded-full backdrop-blur-[1px] transition-all duration-300 ease-[var(--ease-snap)] ${
+          isLink
+            ? "border-ember/70 bg-ember/15 h-9 w-9 border shadow-[0_0_18px_rgba(255,77,28,0.45)]"
+            : "border-acid/60 h-5 w-5 border shadow-[0_0_10px_rgba(212,255,63,0.3)]"
         }`}
       >
-        {state === "default" ? (
-          <div className="bg-ember h-1.5 w-1.5 rounded-full" />
-        ) : null}
+        {!isLink ? <div className="bg-ember h-[3px] w-[3px] rounded-full" /> : null}
       </div>
     </motion.div>
   );

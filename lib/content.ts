@@ -1,0 +1,131 @@
+/**
+ * Typed content source, per docs/TRD.md §5. Copy is a first-pass draft
+ * pulled from real repo READMEs and docs/PRD.md, not final marketing copy.
+ * Status labels are load-bearing: PRD.md §5.3 requires shipped vs
+ * in-progress vs concept vs research to stay honest, never inflated.
+ */
+
+export type Project = {
+  slug: string;
+  title: string;
+  status: "shipped" | "in-progress" | "concept" | "research";
+  role: string;
+  problem: string;
+  outcome: string;
+  stack: string[];
+  links: { live?: string; github?: string; paper?: string };
+  media: { type: "image" | "video"; src: string }[];
+};
+
+export const projects: Project[] = [
+  {
+    slug: "strata-browser",
+    title: "Strata",
+    status: "in-progress",
+    role: "Solo builder",
+    problem:
+      "Closing a browser tab throws away the thread you were following: which pages, which layout, how far you'd scrolled. Bookmarks save a URL, not a workspace.",
+    outcome:
+      "A local-first desktop browser on real Chromium (via CEF), with a Rust backend and React chrome, that quietly remembers your browsing context and lets you restore a whole workspace as a named snapshot. Nothing leaves the machine: no account, no cloud, no sync server.",
+    stack: ["TypeScript", "Rust", "React", "CEF / Chromium"],
+    links: { github: "https://github.com/YadamDheerajReddy/Strata-Browser" },
+    media: [],
+  },
+  {
+    slug: "aurafit-ai",
+    title: "AuraFit AI",
+    status: "in-progress",
+    role: "Solo builder",
+    problem:
+      "Calorie and body-transformation trackers usually mean handing your health data to a cloud service you don't control.",
+    outcome:
+      "A privacy-first, fully local calorie and body-transformation tracker: a Tauri desktop app with a React interface and on-device AI, so tracking never leaves the user's machine.",
+    stack: ["TypeScript", "Tauri", "React", "Local AI"],
+    links: { github: "https://github.com/YadamDheerajReddy/aurafit-ai" },
+    media: [],
+  },
+  {
+    slug: "exam-guard",
+    title: "ExamGuard",
+    status: "in-progress",
+    role: "Solo builder",
+    problem:
+      "Institutions still run exam hall allocation and identity checks off a printed seating chart and a clipboard at the door.",
+    outcome:
+      "A smart exam allocation and identity-verification system: admins map students to halls and seats, each student gets a barcode pass with a hidden seat reveal window, and invigilators verify identity by scanning it on a phone, online or fully offline. Built as a Next.js admin console and student portal plus an Expo scanner app, on Supabase.",
+    stack: ["Next.js", "React", "Expo", "Supabase", "TypeScript"],
+    links: {
+      github: "https://github.com/YadamDheerajReddy/exam-guard",
+      live: "https://exam-guard-two.vercel.app",
+    },
+    media: [],
+  },
+  {
+    slug: "echo",
+    title: "ECHO",
+    status: "shipped",
+    role: "Solo builder",
+    problem:
+      "Getting things done on Windows means switching between a launcher, an AI assistant, clipboard managers, and separate automation tools.",
+    outcome:
+      "An AI-native command palette for Windows: one keyboard shortcut opens a launcher, local AI assistant, clipboard history with OCR, voice input, and workflow automation. Runs offline-first, AI on-device via Ollama and speech-to-text via Whisper.cpp, with cloud AI available strictly opt-in.",
+    stack: ["Rust", "Tauri", "Ollama", "Whisper.cpp"],
+    links: {
+      github:
+        "https://github.com/YadamDheerajReddy/ECHO-Everyday_Computing_Human_Operator",
+    },
+    media: [],
+  },
+  {
+    slug: "tonys-angel-tattooz",
+    title: "Tony's Angel Tattooz",
+    status: "shipped",
+    role: "Freelance developer, YDR Digital",
+    problem:
+      "A working tattoo studio needed a real web presence: something that reads as considered and editorial, not a generic template.",
+    outcome:
+      "A React and Vite single-page site with a monochromatic, editorial design, delivered end to end including DNS and hosting. First paid client project under YDR Digital, live in production.",
+    stack: ["React", "Vite"],
+    links: { live: "https://tonysangeltattooz.in" },
+    media: [],
+  },
+  {
+    slug: "flexnect",
+    title: "Flexnect",
+    status: "in-progress",
+    role: "Founder & solo builder",
+    problem:
+      "Finding a compatible gym workout partner usually happens by chance, not by matching on goals, schedule, or training style.",
+    outcome:
+      "A gym workout-partner matching app, dark-mode-first, built with React Native (Expo) and Supabase. In active private development, not yet publicly launched.",
+    stack: ["React Native", "Expo", "Supabase"],
+    links: {},
+    media: [],
+  },
+  {
+    slug: "kinetx-labs-evolyn",
+    title: "Kinetx Labs - Evolyn Dictionary",
+    status: "in-progress",
+    role: "Founder & product lead",
+    problem:
+      "A brand needs a shared vocabulary before it needs a product: the terms, framing, and knowledge base that everything else gets built on.",
+    outcome:
+      "A brand and product system for Kinetx Labs, centered on the Evolyn Dictionary: a 420-term knowledge base organized across 10 volumes. Demonstrates range beyond code into brand and product thinking.",
+    stack: ["Brand Systems", "Product Design", "Content Architecture"],
+    links: {},
+    media: [],
+  },
+  {
+    slug: "ml-based-firewall",
+    title: "ML-Based Firewall",
+    status: "research",
+    role: "Research author",
+    problem:
+      "Traditional signature-based firewalls struggle to catch novel network threats that don't match a known pattern.",
+    outcome:
+      "An intelligent network firewall that uses machine learning for real-time threat detection and traffic visualization, published in IEEE Xplore.",
+    stack: ["Python", "Machine Learning", "Network Security"],
+    links: {},
+    media: [],
+  },
+];

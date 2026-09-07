@@ -1,5 +1,6 @@
 import { skillGroups } from "@/lib/content";
 import { SectionLabel } from "@/components/ui/SectionLabel";
+import { RevealGroup, RevealItem } from "@/components/motion/Reveal";
 
 export function Skills() {
   return (
@@ -10,9 +11,9 @@ export function Skills() {
           The pieces that fit together
         </h2>
 
-        <div className="mt-12 grid gap-10 md:grid-cols-2 lg:grid-cols-4">
+        <RevealGroup className="mt-12 grid gap-10 md:grid-cols-2 lg:grid-cols-4">
           {skillGroups.map((group) => (
-            <div key={group.category}>
+            <RevealItem key={group.category}>
               <h3 className="font-ui text-ui text-[var(--text-primary)]">
                 {group.category}
               </h3>
@@ -26,9 +27,9 @@ export function Skills() {
                   </li>
                 ))}
               </ul>
-            </div>
+            </RevealItem>
           ))}
-        </div>
+        </RevealGroup>
       </div>
     </section>
   );

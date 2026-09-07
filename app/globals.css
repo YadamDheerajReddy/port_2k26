@@ -21,6 +21,47 @@ body {
   outline-offset: 2px;
 }
 
+/* Native cursor stays hidden while CustomCursor.tsx is active, except over
+   text inputs, where the native caret is the correct affordance. */
+.custom-cursor-active {
+  cursor: none;
+}
+.custom-cursor-active input,
+.custom-cursor-active textarea {
+  cursor: auto;
+}
+
+/* Animation_system.md §4: 1px hairline underline that fills solid ember
+   left to right on hover. */
+.link-underline {
+  position: relative;
+  text-decoration: none;
+}
+.link-underline::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  width: 100%;
+  height: 1px;
+  background: var(--border-subtle);
+}
+.link-underline::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  width: 100%;
+  height: 1px;
+  background: var(--color-ember);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--dur-fast) var(--ease-snap);
+}
+.link-underline:hover::before {
+  transform: scaleX(1);
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;

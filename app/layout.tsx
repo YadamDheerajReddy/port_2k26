@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { fontVariables } from "@/lib/fonts";
+import { ReducedMotionProvider } from "@/components/providers/ReducedMotionProvider";
+import { CustomCursor } from "@/components/ui/CustomCursor";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -15,7 +17,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={fontVariables}>
-      <body className="font-body antialiased">{children}</body>
+      <body className="font-body antialiased">
+        <ReducedMotionProvider>
+          <CustomCursor />
+          {children}
+        </ReducedMotionProvider>
+      </body>
     </html>
   );
 }

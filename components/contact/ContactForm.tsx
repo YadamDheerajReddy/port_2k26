@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import { MagneticWrap } from "@/components/ui/MagneticWrap";
 
 type Status = "idle" | "sending" | "sent" | "error";
 
@@ -89,13 +90,15 @@ export function ContactForm() {
         <p className="font-body text-body text-ember">{errorMessage}</p>
       ) : null}
 
-      <button
-        type="submit"
-        disabled={status === "sending"}
-        className="rounded-button bg-ember font-ui text-ui text-ink hover:bg-ember-dim inline-flex items-center justify-center px-6 py-3 transition-colors duration-[var(--dur-fast)] disabled:opacity-60"
-      >
-        {status === "sending" ? "Sending..." : "Send message"}
-      </button>
+      <MagneticWrap>
+        <button
+          type="submit"
+          disabled={status === "sending"}
+          className="rounded-button bg-ember font-ui text-ui text-ink hover:bg-ember-dim inline-flex items-center justify-center px-6 py-3 transition-colors duration-[var(--dur-fast)] disabled:opacity-60"
+        >
+          {status === "sending" ? "Sending..." : "Send message"}
+        </button>
+      </MagneticWrap>
     </form>
   );
 }

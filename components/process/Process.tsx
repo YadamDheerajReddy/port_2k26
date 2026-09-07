@@ -1,5 +1,6 @@
 import { processSteps } from "@/lib/content";
 import { SectionLabel } from "@/components/ui/SectionLabel";
+import { RevealGroup, RevealItem } from "@/components/motion/Reveal";
 
 export function Process() {
   return (
@@ -10,9 +11,9 @@ export function Process() {
           How a project goes from outreach to launch
         </h2>
 
-        <div className="mt-12 grid gap-8 md:grid-cols-4">
+        <RevealGroup className="mt-12 grid gap-8 md:grid-cols-4">
           {processSteps.map((item) => (
-            <div key={item.step}>
+            <RevealItem key={item.step}>
               <span className="text-mono font-mono text-[var(--accent-primary)]">
                 {item.step}
               </span>
@@ -22,9 +23,9 @@ export function Process() {
               <p className="font-body text-body mt-3 text-[var(--text-secondary)]">
                 {item.description}
               </p>
-            </div>
+            </RevealItem>
           ))}
-        </div>
+        </RevealGroup>
       </div>
     </section>
   );

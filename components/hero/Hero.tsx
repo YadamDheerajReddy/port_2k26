@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/Button";
+import { MagneticWrap } from "@/components/ui/MagneticWrap";
 
 const PROOF = [
   "TCS Workforce Software Consultant",
@@ -36,12 +37,16 @@ export function Hero() {
           </p>
 
           <div className="mt-8 flex flex-wrap gap-4">
-            <Button href="#work" variant="primary">
-              See my work
-            </Button>
-            <Button href="#contact" variant="secondary">
-              Get in touch
-            </Button>
+            <MagneticWrap>
+              <Button href="#work" variant="primary">
+                See my work
+              </Button>
+            </MagneticWrap>
+            <MagneticWrap>
+              <Button href="#contact" variant="secondary">
+                Get in touch
+              </Button>
+            </MagneticWrap>
           </div>
         </div>
 

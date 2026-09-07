@@ -1,5 +1,13 @@
+"use client";
+
+import { useRef } from "react";
+import { motion, useMotionValue, useSpring } from "motion/react";
 import type { Project } from "@/lib/content";
 import { StatusBadge, Tag } from "@/components/ui/Tag";
+import { useReducedMotion } from "@/components/providers/ReducedMotionProvider";
+import { usePointerFine } from "@/lib/usePointerFine";
+
+const MAX_TILT = 6;
 
 export function ProjectCard({
   project,
@@ -9,9 +17,49 @@ export function ProjectCard({
   large?: boolean;
 }) {
   const link = project.links.live ?? project.links.github ?? project.links.paper;
+  const ref = useRef<HTMLDivElement>(null);
+  const pointerFine = usePointerFine();
+  const reducedMotion = useReducedMotion();
+  const tiltActive = pointerFine && !reducedMotion;
+
+  const rotateX = useMotionValue(0);
+  const rotateY = useMotionValue(0);
+  const springRotateX = useSpring(rotateX, { stiffness: 300, damping: 25 });
+  const springRotateY = useSpring(rotateY, { stiffness: 300, damping: 25 });
+  const lift = useMotionValue(0);
+  const springLift = useSpring(lift, { stiffness: 300, damping: 25 });
+
+  function handleMouseMove(event: React.MouseEvent<HTMLDivElement>) {
+    if (!tiltActive || !ref.current) return;
+    const rect = ref.current.getBoundingClientRect();
+    const px = (event.clientX - rect.left) / rect.width - 0.5;
+    const py = (event.clientY - rect.top) / rect.height - 0.5;
+    rotateY.set(px * MAX_TILT * 2);
+    rotateX.set(-py * MAX_TILT * 2);
+  }
+
+  function handleMouseEnter() {
+    if (!reducedMotion) lift.set(-4);
+  }
+
+  function handleMouseLeave() {
+    rotateX.set(0);
+    rotateY.set(0);
+    lift.set(0);
+  }
 
   const Card = (
-    <div
+    <motion.div
+      ref={ref}
+      onMouseMove={handleMouseMove}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      style={{
+        rotateX: tiltActive ? springRotateX : 0,
+        rotateY: tiltActive ? springRotateY : 0,
+        y: springLift,
+        transformPerspective: 800,
+      }}
       className={`rounded-card bg-ink-raised flex h-full flex-col justify-between border border-[var(--border-subtle)] p-6 transition-colors duration-[var(--dur-fast)] ${
         link ? "hover:border-ember" : ""
       } ${large ? "md:p-10" : ""}`}
@@ -36,7 +84,7 @@ export function ProjectCard({
           <Tag key={item}>{item}</Tag>
         ))}
       </div>
-    </div>
+    </motion.div>
   );
 
   if (!link) return Card;

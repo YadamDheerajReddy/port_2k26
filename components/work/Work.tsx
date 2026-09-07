@@ -1,6 +1,7 @@
 import { projects } from "@/lib/content";
 import { SectionLabel } from "@/components/ui/SectionLabel";
 import { ProjectCard } from "@/components/work/ProjectCard";
+import { RevealGroup, RevealItem } from "@/components/motion/Reveal";
 
 const LARGE_SLUGS = new Set(["echo", "tonys-angel-tattooz"]);
 
@@ -15,16 +16,16 @@ export function Work() {
           A few things I&apos;ve built
         </h2>
 
-        <div className="mt-12 grid gap-6 md:grid-cols-2">
+        <RevealGroup className="mt-12 grid gap-6 md:grid-cols-2" stagger={0.1}>
           {featured.map((project) => {
             const large = LARGE_SLUGS.has(project.slug);
             return (
-              <div key={project.slug} className={large ? "md:col-span-2" : ""}>
+              <RevealItem key={project.slug} className={large ? "md:col-span-2" : ""}>
                 <ProjectCard project={project} large={large} />
-              </div>
+              </RevealItem>
             );
           })}
-        </div>
+        </RevealGroup>
       </div>
     </section>
   );

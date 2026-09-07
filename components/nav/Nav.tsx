@@ -43,7 +43,7 @@ export function Nav() {
   return (
     <header className="fixed inset-x-0 top-4 z-50 flex justify-center px-4">
       <nav className="bg-ink/95 grid w-full max-w-[1400px] grid-cols-[1fr_auto_1fr] items-center gap-6 rounded-full border border-[var(--border-subtle)] px-6 py-3 backdrop-blur-[16px]">
-        <div className="flex items-center justify-self-start">
+        <div className="col-start-1 flex items-center justify-self-start">
           {/*
             Always rendered: this is the exact element NameIntro measures
             and lands the animated "DR" monogram on -- same letters, same
@@ -62,8 +62,12 @@ export function Nav() {
         {/* grid-cols-[1fr_auto_1fr]: this middle column sizes to its own
             content and sits exactly centered in the bar, unlike the
             previous flex justify-between, which only centered it when the
-            logo and resume/CTA sections happened to be the same width. */}
-        <div className="hidden items-center gap-8 justify-self-center lg:flex">
+            logo and resume/CTA sections happened to be the same width.
+            col-start-2 is pinned explicitly: a `hidden` sibling is removed
+            from grid item generation entirely, so without an explicit
+            column, auto-placement shifts the next item (the hamburger)
+            into this now-vacant middle slot on mobile instead of column 3. */}
+        <div className="col-start-2 hidden items-center gap-8 justify-self-center lg:flex">
           {LINKS.map((link) => {
             const active = activeHref === link.href;
             return (
@@ -89,7 +93,7 @@ export function Nav() {
           })}
         </div>
 
-        <div className="flex items-center gap-6 justify-self-end">
+        <div className="col-start-3 flex items-center gap-6 justify-self-end">
           <div className="hidden items-center gap-6 lg:flex">
             <div className="h-6 w-px bg-[var(--border-subtle)]" />
             <a

@@ -62,6 +62,22 @@ body {
   transform: scaleX(1);
 }
 
+/* Animation_system.md §2 step 6: barely-perceptible breathing glow on the
+   settled nav-mark, tying back to the intro without competing for
+   attention. Neutralized by the reduced-motion block below automatically. */
+@keyframes nav-logo-breathe {
+  0%,
+  100% {
+    text-shadow: 0 0 0 rgba(255, 77, 28, 0);
+  }
+  50% {
+    text-shadow: 0 0 12px rgba(255, 77, 28, 0.35);
+  }
+}
+.nav-logo-idle-glow {
+  animation: nav-logo-breathe 4s ease-in-out infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;

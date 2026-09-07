@@ -1,8 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { motion, type Variants } from "motion/react";
-import { useReducedMotion } from "@/components/providers/ReducedMotionProvider";
+import {
+  useReducedMotion,
+  useReducedMotionReady,
+} from "@/components/providers/ReducedMotionProvider";
 
 /** Animation_system.md §5: opacity 0->1, y 32px->0, viewport once:true margin:"-15% 0px". */
 const item: Variants = {
@@ -23,10 +25,9 @@ const item: Variants = {
  * default, with JS only ever animating in on top of that.
  */
 function useReadyForMotion() {
+  const ready = useReducedMotionReady();
   const reducedMotion = useReducedMotion();
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
-  return mounted && !reducedMotion;
+  return ready && !reducedMotion;
 }
 
 export function RevealGroup({

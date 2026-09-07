@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import { fontVariables } from "@/lib/fonts";
 import { ReducedMotionProvider } from "@/components/providers/ReducedMotionProvider";
+import { IntroProvider } from "@/components/providers/IntroProvider";
 import { CustomCursor } from "@/components/ui/CustomCursor";
+import { NameIntro } from "@/components/intro/NameIntro";
+import { IntroSimple } from "@/components/intro/IntroSimple";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -19,8 +22,12 @@ export default function RootLayout({
     <html lang="en" className={fontVariables}>
       <body className="font-body antialiased">
         <ReducedMotionProvider>
-          <CustomCursor />
-          {children}
+          <IntroProvider>
+            <CustomCursor />
+            <NameIntro />
+            <IntroSimple />
+            {children}
+          </IntroProvider>
         </ReducedMotionProvider>
       </body>
     </html>

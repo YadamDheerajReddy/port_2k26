@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/Button";
 import { MagneticWrap } from "@/components/ui/MagneticWrap";
+import { IntroRevealGroup, IntroRevealItem } from "@/components/intro/IntroReveal";
 
 const PROOF = [
   "TCS Workforce Software Consultant",
@@ -20,23 +21,29 @@ export function Hero() {
         style={{ background: "var(--gradient-ember-glow)" }}
       />
 
-      <div className="relative mx-auto w-full max-w-[1440px]">
+      <IntroRevealGroup className="relative mx-auto w-full max-w-[1440px]">
         <div className="max-w-3xl">
-          <p className="text-label-caps font-ui text-label text-[var(--accent-primary)]">
-            Full-Stack Developer & Product Builder
-          </p>
+          <IntroRevealItem>
+            <p className="text-label-caps font-ui text-label text-[var(--accent-primary)]">
+              Full-Stack Developer & Product Builder
+            </p>
+          </IntroRevealItem>
 
-          <h1 className="font-display text-display-1 mt-4 text-[var(--text-primary)]">
-            Full-stack developer who <span className="font-signature italic">ships</span>{" "}
-            real products.
-          </h1>
+          <IntroRevealItem>
+            <h1 className="font-display text-display-1 mt-4 text-[var(--text-primary)]">
+              Full-stack developer who{" "}
+              <span className="font-signature italic">ships</span> real products.
+            </h1>
+          </IntroRevealItem>
 
-          <p className="font-body text-body-lg mt-6 max-w-xl text-[var(--text-secondary)]">
-            From AI-powered apps to production client websites, I build things that work
-            and put them in front of real users.
-          </p>
+          <IntroRevealItem>
+            <p className="font-body text-body-lg mt-6 max-w-xl text-[var(--text-secondary)]">
+              From AI-powered apps to production client websites, I build things that work
+              and put them in front of real users.
+            </p>
+          </IntroRevealItem>
 
-          <div className="mt-8 flex flex-wrap gap-4">
+          <IntroRevealItem className="mt-8 flex flex-wrap gap-4">
             <MagneticWrap>
               <Button href="#work" variant="primary">
                 See my work
@@ -47,15 +54,15 @@ export function Hero() {
                 Get in touch
               </Button>
             </MagneticWrap>
-          </div>
+          </IntroRevealItem>
         </div>
 
-        <div className="text-mono mt-20 flex flex-wrap gap-x-8 gap-y-3 border-t border-[var(--border-subtle)] pt-6 font-mono text-[var(--text-secondary)]">
+        <IntroRevealItem className="text-mono mt-20 flex flex-wrap gap-x-8 gap-y-3 border-t border-[var(--border-subtle)] pt-6 font-mono text-[var(--text-secondary)]">
           {PROOF.map((fact) => (
             <span key={fact}>{fact}</span>
           ))}
-        </div>
-      </div>
+        </IntroRevealItem>
+      </IntroRevealGroup>
     </section>
   );
 }

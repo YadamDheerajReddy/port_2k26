@@ -5,6 +5,7 @@ import { motion } from "motion/react";
 import { profile } from "@/lib/content";
 import { Button } from "@/components/ui/Button";
 import { MagneticWrap } from "@/components/ui/MagneticWrap";
+import { IntroRevealGroup, IntroRevealItem } from "@/components/intro/IntroReveal";
 
 const LINKS = [
   { href: "#about", label: "About" },
@@ -57,43 +58,58 @@ export function Nav() {
       }`}
     >
       <div className="mx-auto flex max-w-[1440px] items-center justify-between px-6 py-4">
-        <a href="#top" className="font-signature text-paper text-2xl italic">
-          D
+        {/*
+          Always rendered, never hidden by IntroReveal: this is the exact
+          element NameIntro measures and lands the animated wordmark on.
+          The full-screen intro overlay covers it during the sequence
+          regardless, so there's nothing to visually hide here anyway.
+        */}
+        <a
+          id="nav-logo"
+          href="#top"
+          className="nav-logo-idle-glow font-signature text-paper text-xl italic"
+        >
+          Dheeraj
         </a>
 
-        <nav className="hidden items-center gap-2 md:flex">
+        <IntroRevealGroup className="hidden items-center gap-2 md:flex">
           {LINKS.map((link) => (
-            <a
-              key={link.href}
-              href={link.href}
-              className="font-ui text-ui relative px-3 py-1.5 text-[var(--text-secondary)] transition-colors duration-[var(--dur-fast)] hover:text-[var(--text-primary)]"
-            >
-              {activeHref === link.href ? (
-                <motion.span
-                  layoutId="nav-active-pill"
-                  className="rounded-button bg-ember/15 absolute inset-0"
-                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                />
-              ) : null}
-              <span className="relative">{link.label}</span>
-            </a>
+            <IntroRevealItem key={link.href}>
+              <a
+                href={link.href}
+                className="font-ui text-ui relative px-3 py-1.5 text-[var(--text-secondary)] transition-colors duration-[var(--dur-fast)] hover:text-[var(--text-primary)]"
+              >
+                {activeHref === link.href ? (
+                  <motion.span
+                    layoutId="nav-active-pill"
+                    className="rounded-button bg-ember/15 absolute inset-0"
+                    transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                  />
+                ) : null}
+                <span className="relative">{link.label}</span>
+              </a>
+            </IntroRevealItem>
           ))}
-        </nav>
+        </IntroRevealGroup>
 
-        <div className="hidden items-center gap-4 md:flex">
-          <a
-            href={profile.resume}
-            download
-            className="link-underline font-ui text-ui text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
-          >
-            Resume
-          </a>
-          <MagneticWrap>
-            <Button href="#contact" variant="primary" className="!px-4 !py-2">
-              Get in touch
-            </Button>
-          </MagneticWrap>
-        </div>
+        <IntroRevealGroup className="hidden items-center gap-4 md:flex">
+          <IntroRevealItem>
+            <a
+              href={profile.resume}
+              download
+              className="link-underline font-ui text-ui text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+            >
+              Resume
+            </a>
+          </IntroRevealItem>
+          <IntroRevealItem>
+            <MagneticWrap>
+              <Button href="#contact" variant="primary" className="!px-4 !py-2">
+                Get in touch
+              </Button>
+            </MagneticWrap>
+          </IntroRevealItem>
+        </IntroRevealGroup>
 
         <button
           type="button"

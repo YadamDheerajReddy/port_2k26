@@ -21,7 +21,17 @@ type Phase = "settled" | "pending" | "playing";
 // intro's "DR" handles the same stroke -> fill handoff.
 const strokeDrawDuration = 1.0;
 const staggerPerLetter = 0.09;
-const watermarkOpacity = 0.12;
+const watermarkOpacity = 0.28;
+
+// strokeWidth lives in the SAME coordinate space as the glyph paths and the
+// viewBox: font units, where the whole word is ~5200 units wide, not CSS
+// pixels. A flat number like "4" there renders under half a physical pixel
+// once the ~5200-unit-wide viewBox is scaled down into a 600px-wide box,
+// which is exactly why the draw motion was visible (pathLength animates
+// regardless of width) but nothing was left behind once it settled. Scale
+// it off the font's own unitsPerEm instead so it holds a real, visible
+// width at any render size.
+const strokeWidth = signatureGlyphsMeta.unitsPerEm * 0.025;
 
 /**
  * The first time this section scrolls into view, the "Dheeraj" signature
@@ -114,8 +124,8 @@ export function AboutContent() {
                 d={glyph.d}
                 fill="none"
                 stroke="var(--color-ember)"
-                strokeOpacity={0.35}
-                strokeWidth={4}
+                strokeOpacity={0.2}
+                strokeWidth={strokeWidth}
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 animate={{ pathLength: phase === "pending" ? 0 : 1 }}

@@ -6,6 +6,8 @@ import { SmoothScrollProvider } from "@/components/providers/SmoothScrollProvide
 import { CustomCursor } from "@/components/ui/CustomCursor";
 import { NameIntro } from "@/components/intro/NameIntro";
 import { IntroSimple } from "@/components/intro/IntroSimple";
+import { Nav } from "@/components/nav/Nav";
+import { PageTransition } from "@/components/motion/PageTransition";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -63,7 +65,16 @@ export default function RootLayout({
             <CustomCursor />
             <NameIntro />
             <IntroSimple />
-            <div id="site-shell">{children}</div>
+            <a
+              href="#top"
+              className="focus:rounded-button focus:bg-ember focus:text-ink sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2"
+            >
+              Skip to content
+            </a>
+            <Nav />
+            <div id="site-shell">
+              <PageTransition>{children}</PageTransition>
+            </div>
           </IntroProvider>
         </ReducedMotionProvider>
       </body>

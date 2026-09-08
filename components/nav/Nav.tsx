@@ -2,30 +2,58 @@
 
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { profile } from "@/lib/content";
 import { NavMark } from "@/components/nav/NavMark";
 import { ChamferButton } from "@/components/nav/ChamferButton";
 
 // Order matters here: it's page.tsx's actual section order (Hero, About,
-// Work, Skills, Process, Contact), used below to resolve ties when more
-// than one section is intersecting the trigger band at once. "process" has
-// no nav link of its own but still needs to be observed, otherwise the
-// scroll spy sees a gap between Skills and Contact where nothing is
-// intersecting and just keeps showing whichever link went active last.
-const SECTION_IDS = ["top", "about", "work", "skills", "process", "contact"];
-const LINKS = [
-  { href: "#top", label: "Home" },
-  { href: "#about", label: "About" },
-  { href: "#work", label: "Work" },
-  { href: "#skills", label: "Skills" },
-  { href: "#contact", label: "Contact" },
+// Work, Process), used below to resolve ties when more than one section is
+// intersecting the trigger band at once. "process" has no nav link of its
+// own but still needs to be observed, otherwise the scroll spy sees a gap
+// after Work where nothing is intersecting and just keeps showing whichever
+// link went active last.
+const SECTION_IDS = ["top", "about", "work", "process"];
+
+type NavLinkDef = { label: string; hash?: string; href?: string };
+
+// Skills and Contact are real routes (their sections used to live on the
+// home page, now they're separate pages still being designed -- see
+// app/skills/page.tsx and app/contact/page.tsx). Home/About/Work stay
+// same-page scroll targets when already on "/", per resolveLink below.
+const LINKS: NavLinkDef[] = [
+  { label: "Home", hash: "top" },
+  { label: "About", hash: "about" },
+  { label: "Work", hash: "work" },
+  { label: "Skills", href: "/skills" },
+  { label: "Contact", href: "/contact" },
 ];
 
+/**
+ * A hash link only makes sense as an in-page scroll (data-scroll-to,
+ * Locomotive-aware) while already sitting on "/" -- the section it points
+ * to doesn't exist anywhere else. From any other route it has to be a real
+ * navigation back to "/" (optionally landing on that hash once the home
+ * page has mounted, via the browser's own hash-scroll on load).
+ */
+function resolveLink(link: NavLinkDef, isHomeRoute: boolean) {
+  if (link.hash) {
+    if (isHomeRoute) return { href: `#${link.hash}`, samePage: true };
+    return { href: link.hash === "top" ? "/" : `/#${link.hash}`, samePage: false };
+  }
+  return { href: link.href!, samePage: false };
+}
+
 export function Nav() {
+  const pathname = usePathname();
+  const isHomeRoute = pathname === "/";
   const [activeHref, setActiveHref] = useState<string>("#top");
   const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
+    if (!isHomeRoute) return;
+
     const sections = SECTION_IDS.map((id) => document.getElementById(id)).filter(
       (el): el is HTMLElement => el !== null,
     );
@@ -58,7 +86,9 @@ export function Nav() {
 
     sections.forEach((section) => observer.observe(section));
     return () => observer.disconnect();
-  }, []);
+  }, [isHomeRoute]);
+
+  const homeLink = resolveLink(LINKS[0], isHomeRoute);
 
   return (
     <header className="fixed inset-x-0 top-4 z-50 flex justify-center px-4">
@@ -69,16 +99,27 @@ export function Nav() {
             and lands the animated "DR" monogram on -- same letters, same
             font (Clash Display), so the handoff reads as continuous.
           */}
-          <a
-            id="nav-logo"
-            href="#top"
-            aria-label="Home"
-            className="nav-logo-idle-glow flex items-center"
-            data-scroll-to
-            data-scroll-to-offset={100}
-          >
-            <NavMark />
-          </a>
+          {homeLink.samePage ? (
+            <a
+              id="nav-logo"
+              href={homeLink.href}
+              aria-label="Home"
+              className="nav-logo-idle-glow flex items-center"
+              data-scroll-to
+              data-scroll-to-offset={100}
+            >
+              <NavMark />
+            </a>
+          ) : (
+            <Link
+              id="nav-logo"
+              href={homeLink.href}
+              aria-label="Home"
+              className="nav-logo-idle-glow flex items-center"
+            >
+              <NavMark />
+            </Link>
+          )}
         </div>
 
         {/* grid-cols-[1fr_auto_1fr]: this middle column sizes to its own
@@ -91,28 +132,40 @@ export function Nav() {
             into this now-vacant middle slot on mobile instead of column 3. */}
         <div className="col-start-2 hidden items-center gap-8 justify-self-center lg:flex">
           {LINKS.map((link) => {
-            const active = activeHref === link.href;
-            return (
+            const { href, samePage } = resolveLink(link, isHomeRoute);
+            const active =
+              isHomeRoute && link.hash
+                ? activeHref === `#${link.hash}`
+                : pathname === href;
+            const className = `text-label-caps font-ui text-label relative pb-3 transition-colors duration-[var(--dur-fast)] ${
+              active ? "text-[var(--accent-primary)]" : "text-bone hover:text-paper"
+            }`;
+            const activeLine = active ? (
+              <motion.span
+                layoutId="nav-active-line"
+                className="bg-ember absolute inset-x-0 bottom-0 h-px"
+                transition={{ type: "spring", stiffness: 350, damping: 30 }}
+              >
+                <span className="bg-ember absolute top-1/2 left-1/2 h-1.5 w-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full" />
+              </motion.span>
+            ) : null;
+
+            return samePage ? (
               <a
-                key={link.href}
-                href={link.href}
+                key={link.label}
+                href={href}
                 data-scroll-to
                 data-scroll-to-offset={100}
-                className={`text-label-caps font-ui text-label relative pb-3 transition-colors duration-[var(--dur-fast)] ${
-                  active ? "text-[var(--accent-primary)]" : "text-bone hover:text-paper"
-                }`}
+                className={className}
               >
                 {link.label}
-                {active ? (
-                  <motion.span
-                    layoutId="nav-active-line"
-                    className="bg-ember absolute inset-x-0 bottom-0 h-px"
-                    transition={{ type: "spring", stiffness: 350, damping: 30 }}
-                  >
-                    <span className="bg-ember absolute top-1/2 left-1/2 h-1.5 w-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full" />
-                  </motion.span>
-                ) : null}
+                {activeLine}
               </a>
+            ) : (
+              <Link key={link.label} href={href} className={className}>
+                {link.label}
+                {activeLine}
+              </Link>
             );
           })}
         </div>
@@ -127,7 +180,7 @@ export function Nav() {
             >
               Resume
             </a>
-            <ChamferButton href="#contact">Get in touch</ChamferButton>
+            <ChamferButton href="/contact">Get in touch</ChamferButton>
           </div>
 
           <button
@@ -161,22 +214,40 @@ export function Nav() {
             transition={{ duration: 0.2 }}
             className="bg-ink/95 absolute top-20 right-4 left-4 flex flex-col gap-1 rounded-2xl border border-[var(--border-subtle)] p-3 backdrop-blur-[16px] lg:hidden"
           >
-            {LINKS.map((link) => (
-              <a
-                key={link.href}
-                href={link.href}
-                onClick={() => setMobileOpen(false)}
-                data-scroll-to
-                data-scroll-to-offset={100}
-                className={`text-label-caps font-ui text-label rounded-xl px-4 py-3 transition-colors duration-[var(--dur-fast)] ${
-                  activeHref === link.href
-                    ? "bg-ember/15 text-[var(--accent-primary)]"
-                    : "text-bone hover:text-paper"
-                }`}
-              >
-                {link.label}
-              </a>
-            ))}
+            {LINKS.map((link) => {
+              const { href, samePage } = resolveLink(link, isHomeRoute);
+              const active =
+                isHomeRoute && link.hash
+                  ? activeHref === `#${link.hash}`
+                  : pathname === href;
+              const className = `text-label-caps font-ui text-label rounded-xl px-4 py-3 transition-colors duration-[var(--dur-fast)] ${
+                active
+                  ? "bg-ember/15 text-[var(--accent-primary)]"
+                  : "text-bone hover:text-paper"
+              }`;
+
+              return samePage ? (
+                <a
+                  key={link.label}
+                  href={href}
+                  onClick={() => setMobileOpen(false)}
+                  data-scroll-to
+                  data-scroll-to-offset={100}
+                  className={className}
+                >
+                  {link.label}
+                </a>
+              ) : (
+                <Link
+                  key={link.label}
+                  href={href}
+                  onClick={() => setMobileOpen(false)}
+                  className={className}
+                >
+                  {link.label}
+                </Link>
+              );
+            })}
             <div className="mt-1 flex items-center justify-between border-t border-[var(--border-subtle)] px-4 pt-3">
               <a
                 href={profile.resume}
@@ -185,7 +256,7 @@ export function Nav() {
               >
                 Resume
               </a>
-              <ChamferButton href="#contact">Get in touch</ChamferButton>
+              <ChamferButton href="/contact">Get in touch</ChamferButton>
             </div>
           </motion.div>
         ) : null}

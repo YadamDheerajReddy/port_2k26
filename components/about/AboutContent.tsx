@@ -111,7 +111,13 @@ export function AboutContent() {
       : "none";
 
   return (
-    <div ref={containerRef} className="relative">
+    // `isolate` gives this div its own stacking context so the watermark's
+    // -z-10 below is contained locally, right behind the paragraph. Without
+    // it, once RevealItem's reveal animation settles its transform back to
+    // `none`, there's no positioned/transformed ancestor left to anchor
+    // negative z-index to, so it escapes all the way past this section and
+    // paints behind the section's own background instead.
+    <div ref={containerRef} className="relative isolate">
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 -z-10 flex items-center justify-center"

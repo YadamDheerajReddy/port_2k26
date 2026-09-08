@@ -16,8 +16,8 @@ const SECTION_IDS = ["top", "about", "work", "skills", "process", "contact"];
 const LINKS = [
   { href: "#top", label: "Home" },
   { href: "#about", label: "About" },
-  { href: "#skills", label: "Skills" },
   { href: "#work", label: "Work" },
+  { href: "#skills", label: "Skills" },
   { href: "#contact", label: "Contact" },
 ];
 

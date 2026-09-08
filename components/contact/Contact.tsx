@@ -58,32 +58,10 @@ export function Contact() {
               </a>
             ))}
           </div>
-          <div className="text-mono flex flex-col gap-1 font-mono text-[var(--text-secondary)] md:items-end">
-            <p>
-              {"© "}
-              {year} {profile.name}
-            </p>
-            <p className="text-[0.7rem] opacity-70">
-              3D model &quot;Test Sphere&quot; by{" "}
-              <a
-                href="https://sketchfab.com/joshopel"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="link-underline"
-              >
-                joshopel
-              </a>
-              , licensed{" "}
-              <a
-                href="https://creativecommons.org/licenses/by/4.0/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="link-underline"
-              >
-                CC-BY-4.0
-              </a>
-            </p>
-          </div>
+          <p className="text-mono font-mono text-[var(--text-secondary)]">
+            {"© "}
+            {year} {profile.name}
+          </p>
         </RevealItem>
       </RevealGroup>
     </section>

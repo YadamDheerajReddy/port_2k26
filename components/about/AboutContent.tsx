@@ -21,7 +21,19 @@ type Phase = "settled" | "pending" | "playing";
 // intro's "DR" handles the same stroke -> fill handoff.
 const strokeDrawDuration = 1.0;
 const staggerPerLetter = 0.09;
-const watermarkOpacity = 0.28;
+// The settled watermark is a background detail, not a second headline, so
+// it stays low: a stronger fill reads as a bold shape competing with the
+// paragraph on top of it rather than a faint mark behind it.
+const watermarkOpacity = 0.11;
+// Constant, not animated: an earlier version faded this down via the
+// `style` prop on the same motion.path that also runs the `animate`
+// pathLength draw, and motion doesn't reliably re-sync a plain style value
+// on a motion element once it's actively managing that element's style
+// itself, so the opacity got stuck at its first-render value. A single
+// value that already reads fine throughout the draw sidesteps that
+// entirely, the fill's wash-in below carries the "settling in" motion.
+const strokeOpacity = 0.15;
+const fillSettleTransition = "opacity 1.1s cubic-bezier(0.22, 1, 0.36, 1)";
 
 // strokeWidth lives in the SAME coordinate space as the glyph paths and the
 // viewBox: font units, where the whole word is ~5200 units wide, not CSS
@@ -103,7 +115,7 @@ export function AboutContent() {
 
   const fillOpacity = phase === "settled" ? watermarkOpacity : 0;
   const fillTransition =
-    phase === "settled" && hasRunRef.current ? "opacity 0.5s ease" : "none";
+    phase === "settled" && hasRunRef.current ? fillSettleTransition : "none";
   const paragraphOpacity = phase === "settled" ? 1 : 0;
   const paragraphTransition =
     phase === "settled" && hasRunRef.current
@@ -122,7 +134,7 @@ export function AboutContent() {
         aria-hidden
         className="pointer-events-none absolute inset-0 -z-10 flex items-center justify-center"
       >
-        <svg viewBox={viewBox} className="w-[min(90%,600px)]">
+        <svg viewBox={viewBox} className="w-[min(70%,460px)]">
           {signatureGlyphs.map((glyph, i) => (
             <g key={glyph.char + i} transform={`translate(${glyph.x}, 0) scale(1, -1)`}>
               {/* Stroke: the pen tracing the letterform. */}
@@ -130,7 +142,7 @@ export function AboutContent() {
                 d={glyph.d}
                 fill="none"
                 stroke="var(--color-ember)"
-                strokeOpacity={0.2}
+                strokeOpacity={strokeOpacity}
                 strokeWidth={strokeWidth}
                 strokeLinecap="round"
                 strokeLinejoin="round"

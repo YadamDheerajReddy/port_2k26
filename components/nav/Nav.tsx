@@ -6,7 +6,13 @@ import { profile } from "@/lib/content";
 import { NavMark } from "@/components/nav/NavMark";
 import { ChamferButton } from "@/components/nav/ChamferButton";
 
-const SECTION_IDS = ["top", "about", "skills", "work", "contact"];
+// Order matters here: it's page.tsx's actual section order (Hero, About,
+// Work, Skills, Process, Contact), used below to resolve ties when more
+// than one section is intersecting the trigger band at once. "process" has
+// no nav link of its own but still needs to be observed, otherwise the
+// scroll spy sees a gap between Skills and Contact where nothing is
+// intersecting and just keeps showing whichever link went active last.
+const SECTION_IDS = ["top", "about", "work", "skills", "process", "contact"];
 const LINKS = [
   { href: "#top", label: "Home" },
   { href: "#about", label: "About" },
@@ -24,14 +30,28 @@ export function Nav() {
       (el): el is HTMLElement => el !== null,
     );
 
+    // A callback batch only carries entries whose intersection state just
+    // changed, not the full current picture, and isn't guaranteed to list
+    // them in page order. Taking the first isIntersecting entry in an
+    // arbitrary-order batch is what let a section like Work outrank About:
+    // whichever one happened to arrive first in that particular batch won,
+    // regardless of which was actually on screen. Tracking every currently-
+    // intersecting id ourselves and always resolving to the first one in
+    // true page order (SECTION_IDS) fixes that regardless of batch order.
+    const intersecting = new Set<string>();
+
     const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
           if (entry.isIntersecting) {
-            setActiveHref(`#${entry.target.id}`);
-            break;
+            intersecting.add(entry.target.id);
+          } else {
+            intersecting.delete(entry.target.id);
           }
         }
+
+        const current = SECTION_IDS.find((id) => intersecting.has(id));
+        if (current) setActiveHref(`#${current}`);
       },
       { rootMargin: "-40% 0px -40% 0px" },
     );

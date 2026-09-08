@@ -136,7 +136,7 @@ export function AnnotatedParagraph() {
 
   return (
     <>
-      <p className="font-body text-body-lg max-w-[62ch] text-[var(--text-primary)]">
+      <p className="font-body text-body-lg mx-auto max-w-[62ch] text-center text-[var(--text-primary)]">
         I like building things that{" "}
         <span
           className={markClasses("time")}

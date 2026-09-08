@@ -61,6 +61,20 @@ const PREVIEW_WIDTH = 260;
  * motion.div ancestor carries a transform during its reveal, which would
  * otherwise make `fixed` positioning relative to that div, not the
  * viewport.
+ *
+ * The panel's mount/unmount (AnimatePresence, the blur+scale materialize)
+ * is keyed on whether the list itself is hovered at all, not on which
+ * project -- mouseleave lives only on the list's outer wrapper, never on
+ * individual rows. Moving the cursor from one row straight to the next
+ * updates `hovered` directly from one index to another; it's never briefly
+ * null in between. Putting mouseleave on each row instead was the earlier
+ * bug: crossing the gap between two rows (or even just the row's own
+ * padding) fired a real leave event, so the panel exited and re-entered,
+ * blur and all, on every single row change -- which is exactly what read
+ * as flimsy/broken switching between projects. Only the image inside gets
+ * its own (much quicker, no blur) crossfade when the project changes,
+ * everything else updates instantly since the panel is already sitting
+ * there.
  */
 export function WorkIndex() {
   const pointerFine = usePointerFine();
@@ -73,8 +87,8 @@ export function WorkIndex() {
 
   const x = useMotionValue(0);
   const y = useMotionValue(0);
-  const springX = useSpring(x, { damping: 26, stiffness: 300, mass: 0.5 });
-  const springY = useSpring(y, { damping: 26, stiffness: 300, mass: 0.5 });
+  const springX = useSpring(x, { damping: 30, stiffness: 420, mass: 0.4 });
+  const springY = useSpring(y, { damping: 30, stiffness: 420, mass: 0.4 });
 
   useEffect(() => setMounted(true), []);
 
@@ -91,10 +105,10 @@ export function WorkIndex() {
   }
 
   function handleMove(event: React.MouseEvent) {
-    if (hovered !== null) updatePosition(event.clientX, event.clientY);
+    updatePosition(event.clientX, event.clientY);
   }
 
-  function handleLeave() {
+  function handleListLeave() {
     setHovered(null);
   }
 
@@ -112,44 +126,59 @@ export function WorkIndex() {
         <AnimatePresence>
           {project ? (
             <motion.div
-              key={project.slug}
+              key="preview-panel"
               ref={panelRef}
-              initial={{ opacity: 0, scale: 0.92, filter: "blur(8px)" }}
-              animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
-              exit={{ opacity: 0, scale: 0.95, filter: "blur(6px)" }}
-              transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+              initial={{ opacity: 0, scale: 0.96 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.97 }}
+              transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
               className="rounded-card bg-ink-raised overflow-hidden border border-[var(--border-subtle)] shadow-[0_24px_48px_rgba(0,0,0,0.5)]"
             >
-              <div className="relative aspect-[4/3] w-full">
-                {image ? (
-                  <Image
-                    src={image.src}
-                    alt=""
-                    fill
-                    sizes={`${PREVIEW_WIDTH}px`}
-                    className="object-cover"
-                  />
-                ) : (
-                  <div
-                    className="flex h-full w-full items-center justify-center"
-                    style={{ background: markGradient(hovered!) }}
-                  >
-                    <span className="font-display text-paper/25 text-5xl">
-                      {initials(project.title)}
-                    </span>
+              {/* Image, outcome and tags all live in this one block, keyed
+                  together by slug, so a mid-crossfade frame never shows one
+                  project's image next to another project's text -- they
+                  swap as a single unit, not as two independently-timed
+                  animations that happen to usually land close together. */}
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.div
+                  key={project.slug}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.15, ease: "linear" }}
+                >
+                  <div className="relative aspect-[4/3] w-full overflow-hidden">
+                    {image ? (
+                      <Image
+                        src={image.src}
+                        alt=""
+                        fill
+                        sizes={`${PREVIEW_WIDTH}px`}
+                        className="object-cover"
+                      />
+                    ) : (
+                      <div
+                        className="flex h-full w-full items-center justify-center"
+                        style={{ background: markGradient(hovered!) }}
+                      >
+                        <span className="font-display text-paper/25 text-5xl">
+                          {initials(project.title)}
+                        </span>
+                      </div>
+                    )}
                   </div>
-                )}
-              </div>
-              <div className="p-4">
-                <p className="font-body text-[13px] leading-relaxed text-[var(--text-secondary)]">
-                  {project.outcome}
-                </p>
-                <div className="mt-3 flex flex-wrap gap-1.5">
-                  {project.stack.slice(0, 3).map((item) => (
-                    <Tag key={item}>{item}</Tag>
-                  ))}
-                </div>
-              </div>
+                  <div className="p-4">
+                    <p className="font-body text-[13px] leading-relaxed text-[var(--text-secondary)]">
+                      {project.outcome}
+                    </p>
+                    <div className="mt-3 flex flex-wrap gap-1.5">
+                      {project.stack.slice(0, 3).map((item) => (
+                        <Tag key={item}>{item}</Tag>
+                      ))}
+                    </div>
+                  </div>
+                </motion.div>
+              </AnimatePresence>
             </motion.div>
           ) : null}
         </AnimatePresence>
@@ -159,49 +188,50 @@ export function WorkIndex() {
 
   return (
     <>
-      <RevealGroup className="border-t border-[var(--border-subtle)]" stagger={0.06}>
-        {projects.map((item, index) => {
-          const link = item.links.live ?? item.links.github ?? item.links.paper;
-          const isExternal = /^https?:\/\//.test(link ?? "");
+      <div onMouseLeave={active ? handleListLeave : undefined}>
+        <RevealGroup className="border-t border-[var(--border-subtle)]" stagger={0.06}>
+          {projects.map((item, index) => {
+            const link = item.links.live ?? item.links.github ?? item.links.paper;
+            const isExternal = /^https?:\/\//.test(link ?? "");
 
-          const rowContent = (
-            <div
-              className="group flex items-baseline justify-between gap-6 border-b border-[var(--border-subtle)] py-6 md:py-7"
-              onMouseEnter={active ? (e) => handleEnter(index, e) : undefined}
-              onMouseMove={active ? handleMove : undefined}
-              onMouseLeave={active ? handleLeave : undefined}
-            >
-              <span className="font-display text-display-3 group-hover:text-ember transition-[color,transform] duration-300 ease-[var(--ease-snap)] group-hover:translate-x-2">
-                {item.title}
-              </span>
-              <span className="text-mono flex flex-shrink-0 items-center gap-4 font-mono text-[var(--text-secondary)]">
-                <span className="hidden sm:inline">{item.role}</span>
-                <span className={statusClass(item.status)}>
-                  {STATUS_LABEL[item.status]}
+            const rowContent = (
+              <div
+                className="group flex items-baseline justify-between gap-6 border-b border-[var(--border-subtle)] py-6 md:py-7"
+                onMouseEnter={active ? (e) => handleEnter(index, e) : undefined}
+                onMouseMove={active ? handleMove : undefined}
+              >
+                <span className="font-display text-display-3 group-hover:text-ember transition-[color,transform] duration-300 ease-[var(--ease-snap)] group-hover:translate-x-2">
+                  {item.title}
                 </span>
-              </span>
-            </div>
-          );
+                <span className="text-mono flex flex-shrink-0 items-center gap-4 font-mono text-[var(--text-secondary)]">
+                  <span className="hidden sm:inline">{item.role}</span>
+                  <span className={statusClass(item.status)}>
+                    {STATUS_LABEL[item.status]}
+                  </span>
+                </span>
+              </div>
+            );
 
-          return (
-            <RevealItem key={item.slug}>
-              {link ? (
-                <a
-                  href={link}
-                  {...(isExternal
-                    ? { target: "_blank", rel: "noopener noreferrer" }
-                    : {})}
-                  className="block cursor-pointer"
-                >
-                  {rowContent}
-                </a>
-              ) : (
-                rowContent
-              )}
-            </RevealItem>
-          );
-        })}
-      </RevealGroup>
+            return (
+              <RevealItem key={item.slug}>
+                {link ? (
+                  <a
+                    href={link}
+                    {...(isExternal
+                      ? { target: "_blank", rel: "noopener noreferrer" }
+                      : {})}
+                    className="block cursor-pointer"
+                  >
+                    {rowContent}
+                  </a>
+                ) : (
+                  rowContent
+                )}
+              </RevealItem>
+            );
+          })}
+        </RevealGroup>
+      </div>
       {preview}
     </>
   );

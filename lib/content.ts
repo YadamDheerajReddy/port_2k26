@@ -15,7 +15,6 @@ export type Project = {
   stack: string[];
   links: { live?: string; github?: string; paper?: string };
   media: { type: "image" | "video"; src: string }[];
-  featured: boolean;
 };
 
 export type Profile = {
@@ -102,7 +101,6 @@ export const projects: Project[] = [
     stack: ["TypeScript", "Rust", "React", "CEF / Chromium"],
     links: { github: "https://github.com/YadamDheerajReddy/Strata-Browser" },
     media: [],
-    featured: false,
   },
   {
     slug: "aurafit-ai",
@@ -116,7 +114,6 @@ export const projects: Project[] = [
     stack: ["TypeScript", "Tauri", "React", "Local AI"],
     links: { github: "https://github.com/YadamDheerajReddy/aurafit-ai" },
     media: [],
-    featured: true,
   },
   {
     slug: "exam-guard",
@@ -133,7 +130,6 @@ export const projects: Project[] = [
       live: "https://exam-guard-two.vercel.app",
     },
     media: [],
-    featured: true,
   },
   {
     slug: "echo",
@@ -150,7 +146,6 @@ export const projects: Project[] = [
         "https://github.com/YadamDheerajReddy/ECHO-Everyday_Computing_Human_Operator",
     },
     media: [],
-    featured: true,
   },
   {
     slug: "tonys-angel-tattooz",
@@ -164,48 +159,5 @@ export const projects: Project[] = [
     stack: ["React", "Vite"],
     links: { live: "https://tonysangeltattooz.in" },
     media: [],
-    featured: true,
-  },
-  {
-    slug: "flexnect",
-    title: "Flexnect",
-    status: "in-progress",
-    role: "Founder & solo builder",
-    problem:
-      "Finding a compatible gym workout partner usually happens by chance, not by matching on goals, schedule, or training style.",
-    outcome:
-      "A gym workout-partner matching app, dark-mode-first, built with React Native (Expo) and Supabase. In active private development, not yet publicly launched.",
-    stack: ["React Native", "Expo", "Supabase"],
-    links: {},
-    media: [],
-    featured: false,
-  },
-  {
-    slug: "kinetx-labs-evolyn",
-    title: "Kinetx Labs - Evolyn Dictionary",
-    status: "in-progress",
-    role: "Founder & product lead",
-    problem:
-      "A brand needs a shared vocabulary before it needs a product: the terms, framing, and knowledge base that everything else gets built on.",
-    outcome:
-      "A brand and product system for Kinetx Labs, centered on the Evolyn Dictionary: a 420-term knowledge base organized across 10 volumes. Demonstrates range beyond code into brand and product thinking.",
-    stack: ["Brand Systems", "Product Design", "Content Architecture"],
-    links: {},
-    media: [],
-    featured: true,
-  },
-  {
-    slug: "ml-based-firewall",
-    title: "ML-Based Firewall",
-    status: "research",
-    role: "Research author",
-    problem:
-      "Traditional signature-based firewalls struggle to catch novel network threats that don't match a known pattern.",
-    outcome:
-      "An intelligent network firewall that uses machine learning for real-time threat detection and traffic visualization, published in IEEE Xplore.",
-    stack: ["Python", "Machine Learning", "Network Security"],
-    links: {},
-    media: [],
-    featured: false,
   },
 ];

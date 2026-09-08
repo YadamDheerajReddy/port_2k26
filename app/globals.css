@@ -5,10 +5,45 @@ html {
   scroll-behavior: smooth;
 }
 
+/* SmoothScrollProvider.tsx: once Locomotive/Lenis owns scrolling, it
+   handles anchor jumps itself via data-scroll-to (see Nav.tsx), so the
+   native CSS smoothing here would just be a second, competing animation
+   racing Lenis's own for the same scroll position. Native smooth-behavior
+   stays the fallback for everyone else: reduced-motion visitors and the
+   brief window before the provider's effect has run. */
+html.locomotive-active {
+  scroll-behavior: auto;
+}
+
 body {
   background: var(--bg-primary);
   color: var(--text-primary);
   font-family: var(--font-body);
+}
+
+/* Custom scrollbar, Ember & Ink: a plain system scrollbar is the one piece
+   of chrome that never picked up the palette. Track stays transparent
+   rather than a fixed color since this is one global scrollbar shared by
+   both the dark (ink) and light (paper) section themes, not something that
+   can retheme itself as the user scrolls past each one. */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-ember-dim) transparent;
+}
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background-color: var(--color-ember-dim);
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--color-ember);
 }
 
 ::selection {

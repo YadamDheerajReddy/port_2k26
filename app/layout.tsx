@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { fontVariables } from "@/lib/fonts";
 import { ReducedMotionProvider } from "@/components/providers/ReducedMotionProvider";
 import { IntroProvider } from "@/components/providers/IntroProvider";
+import { SmoothScrollProvider } from "@/components/providers/SmoothScrollProvider";
 import { CustomCursor } from "@/components/ui/CustomCursor";
 import { NameIntro } from "@/components/intro/NameIntro";
 import { IntroSimple } from "@/components/intro/IntroSimple";
@@ -58,6 +59,7 @@ export default function RootLayout({
         <script dangerouslySetInnerHTML={{ __html: INTRO_FLASH_GUARD }} />
         <ReducedMotionProvider>
           <IntroProvider>
+            <SmoothScrollProvider />
             <CustomCursor />
             <NameIntro />
             <IntroSimple />

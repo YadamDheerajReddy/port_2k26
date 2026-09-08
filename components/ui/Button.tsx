@@ -21,12 +21,14 @@ export function Button({
       "border border-[var(--border-subtle)] text-[var(--text-primary)] hover:border-ember",
   };
   const isExternal = /^https?:\/\//.test(href);
+  const isAnchor = href.startsWith("#");
 
   return (
     <a
       href={href}
       className={`${base} ${variants[variant]} ${className}`}
       {...(isExternal ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+      {...(isAnchor ? { "data-scroll-to": true, "data-scroll-to-offset": 100 } : {})}
       {...rest}
     >
       {children}

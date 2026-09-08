@@ -54,6 +54,8 @@ export function Nav() {
             href="#top"
             aria-label="Home"
             className="nav-logo-idle-glow flex items-center"
+            data-scroll-to
+            data-scroll-to-offset={100}
           >
             <NavMark />
           </a>
@@ -74,6 +76,8 @@ export function Nav() {
               <a
                 key={link.href}
                 href={link.href}
+                data-scroll-to
+                data-scroll-to-offset={100}
                 className={`text-label-caps font-ui text-label relative pb-3 transition-colors duration-[var(--dur-fast)] ${
                   active ? "text-[var(--accent-primary)]" : "text-bone hover:text-paper"
                 }`}
@@ -142,6 +146,8 @@ export function Nav() {
                 key={link.href}
                 href={link.href}
                 onClick={() => setMobileOpen(false)}
+                data-scroll-to
+                data-scroll-to-offset={100}
                 className={`text-label-caps font-ui text-label rounded-xl px-4 py-3 transition-colors duration-[var(--dur-fast)] ${
                   activeHref === link.href
                     ? "bg-ember/15 text-[var(--accent-primary)]"

@@ -18,8 +18,14 @@ export function ChamferButton({
   href: string;
   children: React.ReactNode;
 }) {
+  const isAnchor = href.startsWith("#");
+
   return (
-    <a href={href} className="group relative inline-flex">
+    <a
+      href={href}
+      className="group relative inline-flex"
+      {...(isAnchor ? { "data-scroll-to": true, "data-scroll-to-offset": 100 } : {})}
+    >
       <span
         aria-hidden
         className="bg-ember absolute inset-0"

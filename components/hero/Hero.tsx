@@ -18,30 +18,6 @@ export function Hero() {
       id="top"
       className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-6 pt-24"
     >
-      {/* data-scroll-speed on its own wrapper, not the glow div itself:
-          Locomotive/Lenis writes parallax as a raw inline `transform`,
-          which would stomp the glow's own centering translate (an inline
-          style always wins over the class it's layered on). This wrapper
-          carries only the parallax transform, sized to match so the glow
-          inside it can keep centering itself exactly as before. */}
-      <div
-        data-scroll
-        data-scroll-speed="-2"
-        className="pointer-events-none absolute top-1/2 left-1/2 z-0 h-[clamp(320px,80vw,700px)] w-[clamp(320px,80vw,700px)] -translate-x-1/2 -translate-y-1/2"
-      >
-        {/* Sized with clamp rather than a fixed px value: at a fixed 700px
-            this overwhelmed the whole viewport on mobile instead of reading
-            as a glow specifically behind the name. */}
-        <div
-          aria-hidden
-          className="h-full w-full opacity-50"
-          style={{
-            background:
-              "radial-gradient(circle, #ff4d1a 0%, #ff4d1a 25%, transparent 70%)",
-          }}
-        />
-      </div>
-
       <IntroRevealGroup className="relative flex w-full max-w-4xl flex-col items-center text-center">
         <IntroRevealItem className="relative flex w-full flex-col items-center pb-36">
           <h1

@@ -4,6 +4,7 @@ import { ReducedMotionProvider } from "@/components/providers/ReducedMotionProvi
 import { IntroProvider } from "@/components/providers/IntroProvider";
 import { SmoothScrollProvider } from "@/components/providers/SmoothScrollProvider";
 import { CustomCursor } from "@/components/ui/CustomCursor";
+import { ScrollGlow } from "@/components/ui/ScrollGlow";
 import { NameIntro } from "@/components/intro/NameIntro";
 import { IntroSimple } from "@/components/intro/IntroSimple";
 import { Nav } from "@/components/nav/Nav";
@@ -61,6 +62,7 @@ export default function RootLayout({
         <ReducedMotionProvider>
           <IntroProvider>
             <SmoothScrollProvider />
+            <ScrollGlow />
             <CustomCursor />
             <NameIntro />
             <IntroSimple />

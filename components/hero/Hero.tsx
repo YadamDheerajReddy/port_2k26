@@ -79,7 +79,7 @@ export function Hero() {
             </Button>
           </MagneticWrap>
           <MagneticWrap>
-            <Button href="/contact" variant="secondary">
+            <Button href="#contact" variant="secondary">
               Get in touch
             </Button>
           </MagneticWrap>

@@ -1,5 +1,4 @@
 import { ArrowRight } from "lucide-react";
-import Link from "next/link";
 
 const CHAMFER =
   "polygon(14px 0, calc(100% - 14px) 0, 100% 14px, 100% calc(100% - 14px), calc(100% - 14px) 100%, 14px 100%, 0 calc(100% - 14px), 0 14px)";
@@ -20,10 +19,13 @@ export function ChamferButton({
   children: React.ReactNode;
 }) {
   const isAnchor = href.startsWith("#");
-  const className = "group relative inline-flex";
 
-  const inner = (
-    <>
+  return (
+    <a
+      href={href}
+      className="group relative inline-flex"
+      {...(isAnchor ? { "data-scroll-to": true, "data-scroll-to-offset": 100 } : {})}
+    >
       <span
         aria-hidden
         className="bg-ember absolute inset-0"
@@ -41,25 +43,6 @@ export function ChamferButton({
           className="transition-transform duration-[var(--dur-fast)] group-hover:translate-x-0.5"
         />
       </span>
-    </>
-  );
-
-  // Hash anchors go through Locomotive's own data-scroll-to (needs a real
-  // <a> for it to intercept the click). Internal paths go through Next's
-  // Link so the route change runs through the client-side router -- a
-  // plain <a> would hard-reload, skipping the page-transition animation
-  // entirely, not just looking abrupt.
-  if (isAnchor) {
-    return (
-      <a href={href} className={className} data-scroll-to data-scroll-to-offset={100}>
-        {inner}
-      </a>
-    );
-  }
-
-  return (
-    <Link href={href} className={className}>
-      {inner}
-    </Link>
+    </a>
   );
 }

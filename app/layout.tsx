@@ -7,7 +7,6 @@ import { CustomCursor } from "@/components/ui/CustomCursor";
 import { NameIntro } from "@/components/intro/NameIntro";
 import { IntroSimple } from "@/components/intro/IntroSimple";
 import { Nav } from "@/components/nav/Nav";
-import { PageTransition } from "@/components/motion/PageTransition";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -72,9 +71,7 @@ export default function RootLayout({
               Skip to content
             </a>
             <Nav />
-            <div id="site-shell">
-              <PageTransition>{children}</PageTransition>
-            </div>
+            <div id="site-shell">{children}</div>
           </IntroProvider>
         </ReducedMotionProvider>
       </body>

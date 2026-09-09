@@ -1,14 +1,19 @@
 "use client";
 
-import { createContext, useCallback, useContext, useEffect, useState } from "react";
+import { createContext, useCallback, useContext, useLayoutEffect, useState } from "react";
 import {
   useReducedMotion,
   useReducedMotionReady,
 } from "@/components/providers/ReducedMotionProvider";
 
-const SESSION_KEY = "intro-seen";
-
 type IntroMode = "full" | "simple" | "settled";
+
+declare global {
+  interface Window {
+    /** Set once, synchronously, by layout.tsx's blocking script -- read-only here. */
+    __introMode?: IntroMode;
+  }
+}
 
 type IntroState = {
   /** "full": stroke-draw sequence. "simple": plain fade/scale (reduced motion). "settled": no intro, content already visible. */
@@ -31,35 +36,35 @@ export function IntroProvider({ children }: { children: React.ReactNode }) {
   const [mode, setMode] = useState<IntroMode>("settled");
   const [introDone, setIntroDone] = useState(true);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     // Wait for the real reduced-motion reading (see ReducedMotionProvider):
     // deciding on the SSR-safe default here would risk always skipping the
     // intro for regular visitors too.
     if (!ready || decided) return;
 
-    let seen = false;
-    try {
-      seen = sessionStorage.getItem(SESSION_KEY) === "1";
-    } catch {
-      // sessionStorage unavailable (privacy mode, etc): treat as a fresh session.
-    }
+    // The actual decision (and the sessionStorage read/write behind it)
+    // already happened once, synchronously, in layout.tsx's blocking
+    // script -- window.__introMode is read-only here on purpose. Deciding
+    // it again in this effect, from sessionStorage directly, is what used
+    // to let React Strict Mode's dev-only double effect invocation see
+    // its own prior write and skip the intro on the second pass. Reading
+    // a value that was only ever written once is safe to do twice.
+    const decidedMode =
+      (typeof window !== "undefined" && window.__introMode) || "settled";
 
-    if (!seen) {
-      setMode(reducedMotion ? "simple" : "full");
+    if (decidedMode !== "settled") {
+      setMode(reducedMotion ? "simple" : decidedMode);
       setIntroDone(false);
-    }
-
-    try {
-      sessionStorage.setItem(SESSION_KEY, "1");
-    } catch {
-      // Nothing to persist; the intro will just replay next time. Not worth failing over.
     }
 
     // Hands off from layout.tsx's blocking script: by now mode/introDone
     // above are set correctly for this render, so either real content is
     // already visible (mode stayed "settled") or NameIntro/IntroSimple are
     // about to cover it themselves. Safe to stop hiding it via the CSS
-    // class either way, whichever mode was decided.
+    // class either way, whichever mode was decided. useLayoutEffect (not
+    // useEffect) so this resolves before the browser paints this commit,
+    // not after -- the gap between those two is the other half of what
+    // could let real content flash before the intro covers it.
     document.documentElement.classList.remove("intro-pending");
 
     setDecided(true);

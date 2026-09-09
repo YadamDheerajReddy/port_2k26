@@ -4,16 +4,20 @@ import { Work } from "@/components/work/Work";
 import { Skills } from "@/components/skills/Skills";
 import { Process } from "@/components/process/Process";
 import { Contact } from "@/components/contact/Contact";
+import { Footer } from "@/components/footer/Footer";
 
 export default function Home() {
   return (
-    <main>
-      <Hero />
-      <About />
-      <Work />
-      <Skills />
-      <Process />
-      <Contact />
-    </main>
+    <>
+      <main>
+        <Hero />
+        <About />
+        <Work />
+        <Skills />
+        <Process />
+        <Contact />
+      </main>
+      <Footer />
+    </>
   );
 }

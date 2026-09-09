@@ -26,17 +26,30 @@ export const metadata: Metadata = {
 // without it, real content is visible for however long hydration takes
 // before IntroProvider's own effect hides it, on a slow connection that's
 // a very noticeable flash, not the instant ink-fill Animation_system.md
-// §2 calls for. Mirrors IntroProvider's own decision logic exactly, so
-// the two never disagree about whether the intro should play.
+// §2 calls for.
+//
+// The sessionStorage READ *and* WRITE both happen here, once, rather than
+// in IntroProvider's effect -- that used to be split across both places,
+// which is exactly what let React 18/19 Strict Mode's dev-only double
+// effect invocation corrupt the decision: the first invocation would
+// mark the session "seen" and write it, the (simulated unmount +) second
+// invocation would then read its own write back and decide the intro
+// had already played, skipping it and leaving real content visible with
+// no intro at all. window.__introMode below is the single source of
+// truth IntroProvider reads from; it never touches sessionStorage itself.
 const INTRO_FLASH_GUARD = `
 (function() {
   try {
     var seen = sessionStorage.getItem('intro-seen') === '1';
+    if (!seen) sessionStorage.setItem('intro-seen', '1');
     var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (!seen && !reduced) {
+    window.__introMode = seen ? 'settled' : (reduced ? 'simple' : 'full');
+    if (window.__introMode !== 'settled') {
       document.documentElement.classList.add('intro-pending');
     }
-  } catch (e) {}
+  } catch (e) {
+    window.__introMode = 'settled';
+  }
 })();
 `;
 

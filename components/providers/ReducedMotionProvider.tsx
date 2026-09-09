@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useLayoutEffect, useState } from "react";
 
 type ReducedMotionState = {
   /** Real device preference. Meaningless until `ready` is true. */
@@ -31,7 +31,11 @@ const ReducedMotionContext = createContext<ReducedMotionState>({
 export function ReducedMotionProvider({ children }: { children: React.ReactNode }) {
   const [state, setState] = useState<ReducedMotionState>({ reduced: true, ready: false });
 
-  useEffect(() => {
+  // useLayoutEffect, not useEffect: this resolves before the browser paints
+  // the current commit rather than after, closing the gap where a consumer
+  // gated on `ready` (IntroProvider, most visibly) could otherwise render
+  // its stale SSR-safe default for one extra frame.
+  useLayoutEffect(() => {
     const query = window.matchMedia("(prefers-reduced-motion: reduce)");
     setState({ reduced: query.matches, ready: true });
 

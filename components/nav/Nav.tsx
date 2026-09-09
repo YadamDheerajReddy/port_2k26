@@ -91,7 +91,7 @@ export function Nav() {
   const homeLink = resolveLink(LINKS[0], isHomeRoute);
 
   return (
-    <header className="fixed inset-x-0 top-4 z-50 flex justify-center px-4">
+    <header id="site-nav" className="fixed inset-x-0 top-4 z-50 flex justify-center px-4">
       <nav className="bg-ink/95 grid w-full max-w-[1400px] grid-cols-[1fr_auto_1fr] items-center gap-6 rounded-full border border-[var(--border-subtle)] px-6 py-3 backdrop-blur-[16px]">
         <div className="col-start-1 flex items-center justify-self-start">
           {/*

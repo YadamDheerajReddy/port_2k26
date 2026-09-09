@@ -63,8 +63,12 @@ html {
    of a visible flash of the real page before the intro overlay appears
    on top of it. NameIntro/IntroSimple render nothing at this point
    regardless (their own mode check is still the SSR-safe default), so
-   only real content needs hiding here. */
-html.intro-pending #site-shell {
+   it's just the real content (site-shell) and the persistent nav
+   (site-nav, in layout.tsx so it survives route changes) that need
+   hiding here -- both would otherwise be visible with nothing covering
+   them for that same brief window. */
+html.intro-pending #site-shell,
+html.intro-pending #site-nav {
   visibility: hidden;
 }
 

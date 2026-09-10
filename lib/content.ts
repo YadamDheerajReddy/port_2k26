@@ -14,7 +14,12 @@ export type Project = {
   outcome: string;
   stack: string[];
   links: { live?: string; github?: string; paper?: string };
-  media: { type: "image" | "video"; src: string }[];
+  /** width/height are the source file's real pixel dimensions -- CaseStudyMockup
+   *  needs them to render each screenshot at its own true aspect ratio instead
+   *  of forcing every project into one fixed crop. */
+  media: { type: "image" | "video"; src: string; width: number; height: number }[];
+  /** Whether the case study's device showcase should render a phone mockup. Windows/desktop-only builds (Strata, AuraFit AI, ECHO) don't get one -- there's no mobile app to show. */
+  hasMobile: boolean;
 };
 
 export type Profile = {
@@ -111,7 +116,8 @@ export const projects: Project[] = [
       "A local-first desktop browser on real Chromium (via CEF), with a Rust backend and React chrome, that quietly remembers your browsing context and lets you restore a whole workspace as a named snapshot. Nothing leaves the machine: no account, no cloud, no sync server.",
     stack: ["TypeScript", "Rust", "React", "CEF / Chromium"],
     links: { github: "https://github.com/YadamDheerajReddy/Strata-Browser" },
-    media: [],
+    media: [{ type: "image", src: "/images/work/strata-browser.jpg", width: 1917, height: 1021 }],
+    hasMobile: false,
   },
   {
     slug: "aurafit-ai",
@@ -124,7 +130,8 @@ export const projects: Project[] = [
       "A privacy-first, fully local calorie and body-transformation tracker: a Tauri desktop app with a React interface and on-device AI, so tracking never leaves the user's machine.",
     stack: ["TypeScript", "Tauri", "React", "Local AI"],
     links: { github: "https://github.com/YadamDheerajReddy/aurafit-ai" },
-    media: [],
+    media: [{ type: "image", src: "/images/work/aurafit-ai.jpg", width: 1916, height: 982 }],
+    hasMobile: false,
   },
   {
     slug: "exam-guard",
@@ -140,7 +147,8 @@ export const projects: Project[] = [
       github: "https://github.com/YadamDheerajReddy/exam-guard",
       live: "https://exam-guard-two.vercel.app",
     },
-    media: [],
+    media: [{ type: "image", src: "/images/work/exam-guard.jpg", width: 1891, height: 866 }],
+    hasMobile: true,
   },
   {
     slug: "echo",
@@ -156,7 +164,8 @@ export const projects: Project[] = [
       github:
         "https://github.com/YadamDheerajReddy/ECHO-Everyday_Computing_Human_Operator",
     },
-    media: [],
+    media: [{ type: "image", src: "/images/work/echo.jpg", width: 1112, height: 762 }],
+    hasMobile: false,
   },
   {
     slug: "tonys-angel-tattooz",
@@ -169,6 +178,21 @@ export const projects: Project[] = [
       "A React and Vite single-page site with a monochromatic, editorial design, delivered end to end including DNS and hosting. First paid client project under YDR Digital, live in production.",
     stack: ["React", "Vite"],
     links: { live: "https://tonysangeltattooz.in" },
-    media: [],
+    media: [
+      { type: "image", src: "/images/work/tonys-angel-tattooz.jpg", width: 1917, height: 870 },
+    ],
+    hasMobile: true,
+  },
+  {
+    slug: "kinetx-labs",
+    title: "Kinetx Labs",
+    status: "concept",
+    role: "Solo builder",
+    problem: "Case study details coming soon.",
+    outcome: "Case study details coming soon.",
+    stack: [],
+    links: {},
+    media: [{ type: "image", src: "/images/work/kinetx-labs.jpg", width: 1917, height: 861 }],
+    hasMobile: true,
   },
 ];

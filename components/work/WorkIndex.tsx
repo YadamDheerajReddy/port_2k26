@@ -2,88 +2,41 @@
 
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { AnimatePresence, motion, useMotionValue, useSpring } from "motion/react";
-import { projects, type Project } from "@/lib/content";
-import { Tag } from "@/components/ui/Tag";
+import { projects } from "@/lib/content";
 import { RevealGroup, RevealItem } from "@/components/motion/Reveal";
 import { useReducedMotion } from "@/components/providers/ReducedMotionProvider";
 import { usePointerFine } from "@/lib/usePointerFine";
 
-const STATUS_LABEL: Record<Project["status"], string> = {
-  shipped: "Shipped",
-  "in-progress": "In progress",
-  concept: "Concept",
-  research: "Research",
-};
-
-function statusClass(status: Project["status"]) {
-  if (status === "shipped") return "text-ember";
-  if (status === "research") return "text-acid";
-  return "text-bone";
-}
-
-function initials(title: string) {
-  return title
-    .replace(/[^A-Za-z0-9 ]/g, "")
-    .split(" ")
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((word) => word[0])
-    .join("")
-    .toUpperCase();
-}
-
-// Deterministic per-project hue, not random: the same project always gets
-// the same mark. Stands in for a real screenshot until one exists in
-// project.media -- add a media entry (and the actual file) there and the
-// preview below switches to it automatically, nothing here needs to change.
-function markGradient(index: number) {
-  const hue = (16 + index * 41) % 360;
-  return `linear-gradient(135deg, hsl(${hue} 70% 13%), hsl(${(hue + 30) % 360} 82% 20%))`;
-}
-
-function clamp(value: number, min: number, max: number) {
-  return Math.max(min, Math.min(max, value));
-}
-
-const PREVIEW_WIDTH = 260;
+const AUTO_OPEN_MS = 5000;
+const RING_RADIUS = 19;
+const RING_CIRCUMFERENCE = 2 * Math.PI * RING_RADIUS;
 
 /**
- * Design direction: dennissnellenberg.com/work's project index -- a plain
- * list of rows (title, role, status) rather than a card grid, with a
- * preview that floats beside the cursor on hover instead of sitting fixed
- * in a card. Position tracking mirrors CustomCursor.tsx's spring config
- * (tight damping/stiffness) rather than AnnotatedParagraph's softer one:
- * a preview meant to feel like it's genuinely attached to the cursor reads
- * better snapped in tight than lagging behind. Portaled to document.body
- * for the same reason as AnnotatedParagraph's tooltip -- RevealItem's
- * motion.div ancestor carries a transform during its reveal, which would
- * otherwise make `fixed` positioning relative to that div, not the
- * viewport.
- *
- * The panel's mount/unmount (AnimatePresence, the blur+scale materialize)
- * is keyed on whether the list itself is hovered at all, not on which
- * project -- mouseleave lives only on the list's outer wrapper, never on
- * individual rows. Moving the cursor from one row straight to the next
- * updates `hovered` directly from one index to another; it's never briefly
- * null in between. Putting mouseleave on each row instead was the earlier
- * bug: crossing the gap between two rows (or even just the row's own
- * padding) fired a real leave event, so the panel exited and re-entered,
- * blur and all, on every single row change -- which is exactly what read
- * as flimsy/broken switching between projects. Only the image inside gets
- * its own (much quicker, no blur) crossfade when the project changes,
- * everything else updates instantly since the panel is already sitting
- * there.
+ * Hovering a row floats a small ring beside the cursor -- mirrors the old
+ * preview panel's cursor-follow spring rather than sitting fixed inside the
+ * row, since a countdown living inside the card itself read as a loading
+ * bar on the row, not a "the page is about to open" cue. The ring fades
+ * and scales in on entry (never snaps) and its stroke sweeps closed over
+ * 5s; if the pointer is still there when it closes, the case study opens
+ * on its own. A direct click on the row (Link's normal behavior) still
+ * jumps immediately regardless of the timer. Portaled to document.body for
+ * the same reason as the old preview panel: RevealItem's motion.div
+ * ancestor carries a transform during its reveal, which would otherwise
+ * anchor `fixed` positioning to that div instead of the viewport.
  */
 export function WorkIndex() {
+  const router = useRouter();
   const pointerFine = usePointerFine();
   const reducedMotion = useReducedMotion();
   const active = pointerFine && !reducedMotion;
 
   const [hovered, setHovered] = useState<number | null>(null);
+  const [secondsLeft, setSecondsLeft] = useState(Math.ceil(AUTO_OPEN_MS / 1000));
   const [mounted, setMounted] = useState(false);
-  const panelRef = useRef<HTMLDivElement>(null);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const x = useMotionValue(0);
   const y = useMotionValue(0);
@@ -92,94 +45,102 @@ export function WorkIndex() {
 
   useEffect(() => setMounted(true), []);
 
+  useEffect(() => {
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
+  }, []);
+
   function updatePosition(clientX: number, clientY: number) {
-    const height = panelRef.current?.offsetHeight ?? 260;
-    const margin = 20;
-    x.set(clamp(clientX + 28, margin, window.innerWidth - PREVIEW_WIDTH - margin));
-    y.set(clamp(clientY - height / 2, margin, window.innerHeight - height - margin));
+    x.set(clientX + 24);
+    y.set(clientY - 22);
   }
 
   function handleEnter(index: number, event: React.MouseEvent) {
     updatePosition(event.clientX, event.clientY);
     setHovered(index);
+    setSecondsLeft(Math.ceil(AUTO_OPEN_MS / 1000));
+
+    if (intervalRef.current) clearInterval(intervalRef.current);
+    const deadline = Date.now() + AUTO_OPEN_MS;
+    intervalRef.current = setInterval(() => {
+      const remainingMs = deadline - Date.now();
+      if (remainingMs <= 0) {
+        if (intervalRef.current) clearInterval(intervalRef.current);
+        intervalRef.current = null;
+        router.push(`/work/${projects[index].slug}`);
+        return;
+      }
+      setSecondsLeft(Math.ceil(remainingMs / 1000));
+    }, 100);
   }
 
   function handleMove(event: React.MouseEvent) {
     updatePosition(event.clientX, event.clientY);
   }
 
-  function handleListLeave() {
+  function handleLeave() {
     setHovered(null);
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
   }
 
-  const project = hovered !== null ? projects[hovered] : null;
-  const image = project?.media[0];
-
-  const preview =
+  const ring =
     mounted &&
     createPortal(
       <motion.div
         aria-hidden
         className="pointer-events-none fixed top-0 left-0 z-[70]"
-        style={{ x: springX, y: springY, width: PREVIEW_WIDTH }}
+        style={{ x: springX, y: springY }}
       >
         <AnimatePresence>
-          {project ? (
-            <motion.div
-              key="preview-panel"
-              ref={panelRef}
-              initial={{ opacity: 0, scale: 0.96 }}
+          {hovered !== null ? (
+            <motion.svg
+              key="ring"
+              width="44"
+              height="44"
+              viewBox="0 0 44 44"
+              initial={{ opacity: 0, scale: 0.7 }}
               animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.97 }}
-              transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
-              className="rounded-card bg-ink-raised overflow-hidden border border-[var(--border-subtle)] shadow-[0_24px_48px_rgba(0,0,0,0.5)]"
+              exit={{ opacity: 0, scale: 0.7 }}
+              transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
             >
-              {/* Image, outcome and tags all live in this one block, keyed
-                  together by slug, so a mid-crossfade frame never shows one
-                  project's image next to another project's text -- they
-                  swap as a single unit, not as two independently-timed
-                  animations that happen to usually land close together. */}
-              <AnimatePresence mode="wait" initial={false}>
-                <motion.div
-                  key={project.slug}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.15, ease: "linear" }}
-                >
-                  <div className="relative aspect-[4/3] w-full overflow-hidden">
-                    {image ? (
-                      <Image
-                        src={image.src}
-                        alt=""
-                        fill
-                        sizes={`${PREVIEW_WIDTH}px`}
-                        className="object-cover"
-                      />
-                    ) : (
-                      <div
-                        className="flex h-full w-full items-center justify-center"
-                        style={{ background: markGradient(hovered!) }}
-                      >
-                        <span className="font-display text-paper/25 text-5xl">
-                          {initials(project.title)}
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                  <div className="p-4">
-                    <p className="font-body text-[13px] leading-relaxed text-[var(--text-secondary)]">
-                      {project.outcome}
-                    </p>
-                    <div className="mt-3 flex flex-wrap gap-1.5">
-                      {project.stack.slice(0, 3).map((item) => (
-                        <Tag key={item}>{item}</Tag>
-                      ))}
-                    </div>
-                  </div>
-                </motion.div>
-              </AnimatePresence>
-            </motion.div>
+              <circle
+                cx="22"
+                cy="22"
+                r={RING_RADIUS}
+                stroke="var(--border-subtle)"
+                strokeWidth="2"
+                fill="none"
+              />
+              <motion.circle
+                key={hovered}
+                cx="22"
+                cy="22"
+                r={RING_RADIUS}
+                stroke="var(--color-ember)"
+                strokeWidth="2"
+                fill="none"
+                strokeLinecap="round"
+                strokeDasharray={RING_CIRCUMFERENCE}
+                style={{ rotate: -90, transformOrigin: "22px 22px" }}
+                initial={{ strokeDashoffset: RING_CIRCUMFERENCE }}
+                animate={{ strokeDashoffset: 0 }}
+                transition={{ duration: AUTO_OPEN_MS / 1000, ease: "linear" }}
+              />
+              <text
+                x="22"
+                y="23"
+                textAnchor="middle"
+                dominantBaseline="central"
+                className="font-mono fill-paper"
+                fontSize="13"
+              >
+                {secondsLeft}
+              </text>
+            </motion.svg>
           ) : null}
         </AnimatePresence>
       </motion.div>,
@@ -188,51 +149,39 @@ export function WorkIndex() {
 
   return (
     <>
-      <div onMouseLeave={active ? handleListLeave : undefined}>
-        <RevealGroup className="border-t border-[var(--border-subtle)]" stagger={0.06}>
-          {projects.map((item, index) => {
-            const link = item.links.live ?? item.links.github ?? item.links.paper;
-            const isExternal = /^https?:\/\//.test(link ?? "");
-
-            const rowContent = (
-              <div
-                className="group flex items-baseline justify-between gap-6 border-b border-[var(--border-subtle)] py-6 md:py-7"
-                onMouseEnter={active ? (e) => handleEnter(index, e) : undefined}
-                onMouseMove={active ? handleMove : undefined}
+      <RevealGroup className="border-t border-[var(--border-subtle)]" stagger={0.06}>
+        {projects.map((item, index) => (
+          <RevealItem key={item.slug}>
+            <Link
+              href={`/work/${item.slug}`}
+              className="group flex items-baseline justify-between gap-6 border-b border-[var(--border-subtle)] py-6 md:py-7"
+              onMouseEnter={active ? (e) => handleEnter(index, e) : undefined}
+              onMouseMove={active ? handleMove : undefined}
+              onMouseLeave={active ? handleLeave : undefined}
+            >
+              <span className="font-display text-display-3 group-hover:text-ember transition-[color,transform] duration-300 ease-[var(--ease-snap)] group-hover:translate-x-2">
+                {item.title}
+              </span>
+              <svg
+                width="28"
+                height="20"
+                viewBox="0 0 20 14"
+                fill="none"
+                className="group-hover:text-ember flex-shrink-0 text-[var(--text-secondary)] transition-[color,transform] duration-300 ease-[var(--ease-snap)] group-hover:translate-x-1.5"
               >
-                <span className="font-display text-display-3 group-hover:text-ember transition-[color,transform] duration-300 ease-[var(--ease-snap)] group-hover:translate-x-2">
-                  {item.title}
-                </span>
-                <span className="text-mono flex flex-shrink-0 items-center gap-4 font-mono text-[var(--text-secondary)]">
-                  <span className="hidden sm:inline">{item.role}</span>
-                  <span className={statusClass(item.status)}>
-                    {STATUS_LABEL[item.status]}
-                  </span>
-                </span>
-              </div>
-            );
-
-            return (
-              <RevealItem key={item.slug}>
-                {link ? (
-                  <a
-                    href={link}
-                    {...(isExternal
-                      ? { target: "_blank", rel: "noopener noreferrer" }
-                      : {})}
-                    className="block cursor-pointer"
-                  >
-                    {rowContent}
-                  </a>
-                ) : (
-                  rowContent
-                )}
-              </RevealItem>
-            );
-          })}
-        </RevealGroup>
-      </div>
-      {preview}
+                <path
+                  d="M1 7H19M19 7L13 1M19 7L13 13"
+                  stroke="currentColor"
+                  strokeWidth="1.3"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </Link>
+          </RevealItem>
+        ))}
+      </RevealGroup>
+      {ring}
     </>
   );
 }

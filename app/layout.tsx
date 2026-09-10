@@ -8,12 +8,61 @@ import { ScrollGlow } from "@/components/ui/ScrollGlow";
 import { NameIntro } from "@/components/intro/NameIntro";
 import { IntroSimple } from "@/components/intro/IntroSimple";
 import { Nav } from "@/components/nav/Nav";
+import { PersonJsonLd } from "@/components/seo/JsonLd";
 import "./globals.css";
 
+const SITE_URL = "https://dheerajdev.space";
+const SITE_NAME = "Dheeraj Reddy";
+const SITE_DESCRIPTION =
+  "Full-stack developer who ships real products, from AI-powered apps to production client websites. See case studies, skills, and how to get in touch.";
+
+// metadataBase turns every relative URL used below (and in each page's own
+// openGraph/alternates) into an absolute one at build time, so a case
+// study's `alternates.canonical: "/work/strata-browser"` resolves against
+// the real domain instead of shipping a bare path into <link rel="canonical">.
 export const metadata: Metadata = {
-  title: "Dheeraj Reddy | Full-stack developer & product builder",
-  description:
-    "Full-stack developer who ships real products, from AI-powered apps to production client websites.",
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: `${SITE_NAME} | Full-stack developer & product builder`,
+    template: `%s | ${SITE_NAME}`,
+  },
+  description: SITE_DESCRIPTION,
+  keywords: [
+    "Dheeraj Reddy",
+    "full-stack developer",
+    "product builder",
+    "web developer portfolio",
+    "React developer",
+    "Next.js developer",
+    "AI applications developer",
+  ],
+  authors: [{ name: SITE_NAME, url: SITE_URL }],
+  creator: SITE_NAME,
+  alternates: {
+    canonical: "/",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+    },
+  },
+  openGraph: {
+    type: "website",
+    url: SITE_URL,
+    siteName: SITE_NAME,
+    title: `${SITE_NAME} | Full-stack developer & product builder`,
+    description: SITE_DESCRIPTION,
+    locale: "en_US",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: `${SITE_NAME} | Full-stack developer & product builder`,
+    description: SITE_DESCRIPTION,
+  },
 };
 
 // Deliberately a raw <script> tag below, not next/script: next/script's
@@ -72,6 +121,7 @@ export default function RootLayout({
     <html lang="en" className={fontVariables} suppressHydrationWarning>
       <body className="font-body antialiased">
         <script dangerouslySetInnerHTML={{ __html: INTRO_FLASH_GUARD }} />
+        <PersonJsonLd />
         <ReducedMotionProvider>
           <IntroProvider>
             <SmoothScrollProvider />

@@ -31,7 +31,7 @@ export function CaseStudyMockup({ project, index }: { project: Project; index: n
       {image ? (
         <Image
           src={image.src}
-          alt=""
+          alt={`${project.title} interface screenshot`}
           width={image.width}
           height={image.height}
           sizes="900px"

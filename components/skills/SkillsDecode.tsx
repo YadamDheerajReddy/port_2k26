@@ -120,9 +120,9 @@ export function SkillsDecode() {
         >
           {displayText}
         </span>
-        <h3 className="font-display text-display-1 relative text-[var(--text-primary)]">
+        <h2 className="font-display text-display-1 relative text-[var(--text-primary)]">
           {displayText}
-        </h3>
+        </h2>
       </div>
 
       <div className="mt-10 flex flex-wrap justify-center gap-2.5">

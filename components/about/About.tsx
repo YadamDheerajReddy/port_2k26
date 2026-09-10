@@ -11,7 +11,7 @@ export function About() {
       <div className="mx-auto max-w-[1440px]">
         <RevealGroup className="mx-auto max-w-[720px] text-center">
           <RevealItem>
-            <SectionLabel>About</SectionLabel>
+            <SectionLabel as="h2">About</SectionLabel>
           </RevealItem>
           <RevealItem className="mt-10">
             <AboutContent />

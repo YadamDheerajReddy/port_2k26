@@ -4,6 +4,7 @@ import { projects } from "@/lib/content";
 import { CaseStudy } from "@/components/work/CaseStudy";
 import { CaseStudyNextLink } from "@/components/work/CaseStudyNextLink";
 import { Footer } from "@/components/footer/Footer";
+import { ProjectJsonLd } from "@/components/seo/JsonLd";
 
 export function generateStaticParams() {
   return projects.map((project) => ({ slug: project.slug }));
@@ -19,8 +20,23 @@ export async function generateMetadata({
   if (!project) return {};
 
   return {
-    title: `${project.title} | Dheeraj Reddy`,
+    title: project.title,
     description: project.outcome,
+    keywords: project.stack,
+    alternates: {
+      canonical: `/work/${project.slug}`,
+    },
+    openGraph: {
+      type: "article",
+      title: project.title,
+      description: project.outcome,
+      url: `/work/${project.slug}`,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: project.title,
+      description: project.outcome,
+    },
   };
 }
 
@@ -37,6 +53,7 @@ export default async function CaseStudyPage({
 
   return (
     <>
+      <ProjectJsonLd project={projects[index]} />
       <main>
         <CaseStudy project={projects[index]} index={index} />
         <CaseStudyNextLink project={projects[nextIndex]} index={nextIndex} />

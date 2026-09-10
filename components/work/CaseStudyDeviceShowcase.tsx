@@ -25,7 +25,7 @@ const CYCLE_MS = 3200;
  * bug CaseStudyMockup.tsx's hero image had. The ink-colored letterbox
  * bars read as bezel, not as a gap.
  */
-function DeviceCrossfade({ images }: { images: string[] }) {
+function DeviceCrossfade({ images, altPrefix }: { images: string[]; altPrefix: string }) {
   const reducedMotion = useReducedMotion();
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
@@ -54,7 +54,13 @@ function DeviceCrossfade({ images }: { images: string[] }) {
     >
       {springs.map((style, i) => (
         <animated.div key={images[i]} className="absolute inset-0" style={style}>
-          <Image src={images[i]} alt="" fill sizes="640px" className="object-contain" />
+          <Image
+            src={images[i]}
+            alt={`${altPrefix} screen ${i + 1}`}
+            fill
+            sizes="640px"
+            className="object-contain"
+          />
         </animated.div>
       ))}
     </div>
@@ -84,7 +90,10 @@ export function CaseStudyDeviceShowcase({
         <div className="rounded-t-xl border border-b-0 border-black/10 bg-[#1c1a17] p-2 shadow-[0_40px_80px_rgba(0,0,0,0.35)]">
           <div className="relative aspect-[16/10] overflow-hidden rounded-lg">
             {hasDesktopScreens ? (
-              <DeviceCrossfade images={project.desktopScreens} />
+              <DeviceCrossfade
+                images={project.desktopScreens}
+                altPrefix={`${project.title} desktop`}
+              />
             ) : (
               <div
                 className="flex h-full w-full items-center justify-center"
@@ -108,7 +117,10 @@ export function CaseStudyDeviceShowcase({
           <div className="absolute -right-1 -bottom-6 w-[28%] max-w-[128px] min-w-[92px] rounded-[22px] border-4 border-[#1c1a17] bg-[#1c1a17] shadow-[0_30px_60px_rgba(0,0,0,0.4)]">
             <div className="relative aspect-[9/19.5] overflow-hidden rounded-[16px]">
               {hasMobileScreens ? (
-                <DeviceCrossfade images={project.mobileScreens} />
+                <DeviceCrossfade
+                  images={project.mobileScreens}
+                  altPrefix={`${project.title} mobile`}
+                />
               ) : (
                 <div
                   className="flex h-full w-full items-center justify-center"

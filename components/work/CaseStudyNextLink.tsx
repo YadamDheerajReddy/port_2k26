@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
+import Image from "next/image";
 import Link from "next/link";
 import { useSpring, animated, to } from "@react-spring/web";
 import type { Project } from "@/lib/content";
@@ -19,10 +20,11 @@ const MAX_TILT_DEG = 4;
  * to react-spring instead of Motion: same reasoning (portal to body so
  * `fixed` positions against the viewport, not some ancestor's transform),
  * same idea (a sneak peek of what you're about to click into), just reused
- * here instead of inventing a second pattern for the same job. `index` is
- * the *next* project's real position in the list, so its gradient matches
- * exactly what that project's own case study page shows -- not a fresh
- * one recomputed relative to this page.
+ * here instead of inventing a second pattern for the same job. Shows the
+ * next project's real hero screenshot when it has one, same as WorkIndex's
+ * panel; `index` is the *next* project's real position in the list, so its
+ * gradient fallback matches exactly what that project's own case study
+ * page falls back to -- not a fresh one recomputed relative to this page.
  */
 export function CaseStudyNextLink({
   project,
@@ -77,6 +79,8 @@ export function CaseStudyNextLink({
     previewApi.start({ scale: 0.85, opacity: 0 });
   }
 
+  const image = project.media[0];
+
   const preview =
     mounted &&
     createPortal(
@@ -85,15 +89,19 @@ export function CaseStudyNextLink({
         className="pointer-events-none fixed top-0 left-0 z-[70]"
         style={{ x: px, y: py, scale, opacity }}
       >
-        <div className="rounded-card bg-ink-raised h-[150px] w-[210px] overflow-hidden border border-white/10 shadow-[0_24px_48px_rgba(0,0,0,0.5)]">
-          <div
-            className="flex h-full w-full items-center justify-center"
-            style={{ background: markGradient(index) }}
-          >
-            <span className="font-display text-paper/25 text-5xl">
-              {initials(project.title)}
-            </span>
-          </div>
+        <div className="rounded-card bg-ink-raised relative h-[150px] w-[210px] overflow-hidden border border-white/10 shadow-[0_24px_48px_rgba(0,0,0,0.5)]">
+          {image ? (
+            <Image src={image.src} alt="" fill sizes="210px" className="object-cover" />
+          ) : (
+            <div
+              className="flex h-full w-full items-center justify-center"
+              style={{ background: markGradient(index) }}
+            >
+              <span className="font-display text-paper/25 text-5xl">
+                {initials(project.title)}
+              </span>
+            </div>
+          )}
         </div>
       </animated.div>,
       document.body,

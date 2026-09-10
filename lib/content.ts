@@ -20,6 +20,13 @@ export type Project = {
   media: { type: "image" | "video"; src: string; width: number; height: number }[];
   /** Whether the case study's device showcase should render a phone mockup. Windows/desktop-only builds (Strata, AuraFit AI, ECHO) don't get one -- there's no mobile app to show. */
   hasMobile: boolean;
+  /** Real screenshots for the device showcase, in display order. desktopScreens
+   *  crossfades in the laptop frame; mobileScreens (only meaningful when
+   *  hasMobile is true) crossfades independently in the phone frame -- the
+   *  two aren't paired by index since a project's real desktop and mobile
+   *  screenshots rarely come in matching counts. */
+  desktopScreens: string[];
+  mobileScreens: string[];
 };
 
 export type Profile = {
@@ -118,6 +125,12 @@ export const projects: Project[] = [
     links: { github: "https://github.com/YadamDheerajReddy/Strata-Browser" },
     media: [{ type: "image", src: "/images/work/strata-browser.jpg", width: 1917, height: 1021 }],
     hasMobile: false,
+    desktopScreens: [
+      "/images/work/strata-browser-desktop-1.jpg",
+      "/images/work/strata-browser-desktop-2.jpg",
+      "/images/work/strata-browser-desktop-3.jpg",
+    ],
+    mobileScreens: [],
   },
   {
     slug: "aurafit-ai",
@@ -132,6 +145,15 @@ export const projects: Project[] = [
     links: { github: "https://github.com/YadamDheerajReddy/aurafit-ai" },
     media: [{ type: "image", src: "/images/work/aurafit-ai.jpg", width: 1916, height: 982 }],
     hasMobile: false,
+    desktopScreens: [
+      "/images/work/aurafit-ai-desktop-1.jpg",
+      "/images/work/aurafit-ai-desktop-2.jpg",
+      "/images/work/aurafit-ai-desktop-3.jpg",
+      "/images/work/aurafit-ai-desktop-4.jpg",
+      "/images/work/aurafit-ai-desktop-5.jpg",
+      "/images/work/aurafit-ai-desktop-6.jpg",
+    ],
+    mobileScreens: [],
   },
   {
     slug: "exam-guard",
@@ -145,10 +167,16 @@ export const projects: Project[] = [
     stack: ["Next.js", "React", "Expo", "Supabase", "TypeScript"],
     links: {
       github: "https://github.com/YadamDheerajReddy/exam-guard",
-      live: "https://exam-guard-two.vercel.app",
+      live: "https://www.examguard.online",
     },
     media: [{ type: "image", src: "/images/work/exam-guard.jpg", width: 1891, height: 866 }],
     hasMobile: true,
+    desktopScreens: [
+      "/images/work/exam-guard-desktop-1.jpg",
+      "/images/work/exam-guard-desktop-2.jpg",
+      "/images/work/exam-guard-desktop-3.jpg",
+    ],
+    mobileScreens: ["/images/work/exam-guard-mobile-1.jpg", "/images/work/exam-guard-mobile-2.jpg"],
   },
   {
     slug: "echo",
@@ -166,6 +194,12 @@ export const projects: Project[] = [
     },
     media: [{ type: "image", src: "/images/work/echo.jpg", width: 1112, height: 762 }],
     hasMobile: false,
+    desktopScreens: [
+      "/images/work/echo-desktop-1.jpg",
+      "/images/work/echo-desktop-2.jpg",
+      "/images/work/echo-desktop-3.jpg",
+    ],
+    mobileScreens: [],
   },
   {
     slug: "tonys-angel-tattooz",
@@ -182,17 +216,37 @@ export const projects: Project[] = [
       { type: "image", src: "/images/work/tonys-angel-tattooz.jpg", width: 1917, height: 870 },
     ],
     hasMobile: true,
+    desktopScreens: [
+      "/images/work/tonys-angel-tattooz-desktop-1.jpg",
+      "/images/work/tonys-angel-tattooz-desktop-2.jpg",
+      "/images/work/tonys-angel-tattooz-desktop-3.jpg",
+    ],
+    mobileScreens: [
+      "/images/work/tonys-angel-tattooz-mobile-1.jpg",
+      "/images/work/tonys-angel-tattooz-mobile-2.jpg",
+    ],
   },
   {
     slug: "kinetx-labs",
     title: "Kinetx Labs",
-    status: "concept",
-    role: "Solo builder",
-    problem: "Case study details coming soon.",
-    outcome: "Case study details coming soon.",
+    status: "shipped",
+    role: "Freelance developer, YDR Digital",
+    problem:
+      "Kinetx Labs is a SaaS company building products for measurable human growth. They needed a marketing site that could introduce that positioning and their flagship product without reading like a generic SaaS template.",
+    outcome:
+      "A product-led marketing site for Kinetx Labs, built around their \"technology for measurable human growth\" philosophy and their EVOLYN product, live in production.",
     stack: [],
-    links: {},
+    links: { live: "https://www.kinetxlabs.com" },
     media: [{ type: "image", src: "/images/work/kinetx-labs.jpg", width: 1917, height: 861 }],
     hasMobile: true,
+    desktopScreens: [
+      "/images/work/kinetx-labs-desktop-1.jpg",
+      "/images/work/kinetx-labs-desktop-2.jpg",
+      "/images/work/kinetx-labs-desktop-3.jpg",
+    ],
+    mobileScreens: [
+      "/images/work/kinetx-labs-mobile-1.jpg",
+      "/images/work/kinetx-labs-mobile-2.jpg",
+    ],
   },
 ];

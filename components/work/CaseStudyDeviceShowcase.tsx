@@ -1,49 +1,61 @@
 "use client";
 
-import { useState } from "react";
-import { useSpring, animated } from "@react-spring/web";
+import { useEffect, useState } from "react";
+import { useSprings, animated } from "@react-spring/web";
+import Image from "next/image";
 import type { Project } from "@/lib/content";
-import { markGradient } from "@/lib/work";
+import { markGradient, initials } from "@/lib/work";
 import { useReducedMotion } from "@/components/providers/ReducedMotionProvider";
 
-const SCREEN_COUNT = 2;
+const CYCLE_MS = 3200;
 
 /**
- * Same honest stand-in as CaseStudyMockup -- no real screenshots exist yet,
- * so each "screen" is an abstract layout (a card grid, a stacked list) over
- * the project's own deterministic gradient, not a fabricated UI claim.
- * Laptop and phone always show the *other* screen from each other, so the
- * pair reads as "two real views of the same product" rather than two
- * copies of the same thing at different sizes.
+ * Crossfades through one device's real screenshots on its own loop. Laptop
+ * and phone each get their own instance with their own image list and
+ * timer -- a project's desktop and mobile screenshots rarely come in
+ * matching counts (e.g. ExamGuard: 3 desktop, 2 mobile), so showing the
+ * same "screen index" in both frames would be a coincidence, not a real
+ * pairing. Pauses on hover (WCAG 2.2.2, same reasoning as Marquee.tsx's
+ * pause-on-hover) and never auto-advances under reduced motion.
+ *
+ * object-contain, not object-cover: the device frame is a fixed 16:10 (or
+ * 9:19.5) silhouette, but real screenshots don't land on that ratio --
+ * ExamGuard's desktop shots run ~2.2:1, its mobile shots ~0.58:1 -- so
+ * object-cover was cropping real content out of every one of them, same
+ * bug CaseStudyMockup.tsx's hero image had. The ink-colored letterbox
+ * bars read as bezel, not as a gap.
  */
-function ScreenContent({ variant, gradient }: { variant: 0 | 1; gradient: string }) {
-  if (variant === 1) {
-    return (
-      <div
-        className="flex h-full w-full flex-col justify-center gap-2.5 p-4"
-        style={{ background: gradient }}
-      >
-        {[100, 78, 88, 62].map((width, i) => (
-          <div
-            key={i}
-            className={`h-3 rounded-full ${i === 0 ? "bg-ember/40" : "bg-paper/10"}`}
-            style={{ width: `${width}%` }}
-          />
-        ))}
-      </div>
-    );
-  }
+function DeviceCrossfade({ images }: { images: string[] }) {
+  const reducedMotion = useReducedMotion();
+  const [index, setIndex] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const [springs, api] = useSprings(images.length, (i) => ({
+    opacity: i === 0 ? 1 : 0,
+    config: { tension: 170, friction: 26 },
+  }));
+
+  useEffect(() => {
+    if (reducedMotion || paused || images.length < 2) return;
+    const id = setInterval(() => {
+      setIndex((prev) => (prev + 1) % images.length);
+    }, CYCLE_MS);
+    return () => clearInterval(id);
+  }, [reducedMotion, paused, images.length]);
+
+  useEffect(() => {
+    api.start((i) => ({ opacity: i === index ? 1 : 0, immediate: reducedMotion }));
+  }, [index, api, reducedMotion]);
 
   return (
     <div
-      className="grid h-full w-full grid-cols-3 gap-2 p-4"
-      style={{ background: gradient }}
+      className="relative h-full w-full bg-[#0e0c0a]"
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
     >
-      {Array.from({ length: 6 }).map((_, i) => (
-        <div
-          key={i}
-          className={`rounded-md ${i === 0 ? "bg-ember/40" : "bg-paper/10"}`}
-        />
+      {springs.map((style, i) => (
+        <animated.div key={images[i]} className="absolute inset-0" style={style}>
+          <Image src={images[i]} alt="" fill sizes="640px" className="object-contain" />
+        </animated.div>
       ))}
     </div>
   );
@@ -56,23 +68,8 @@ export function CaseStudyDeviceShowcase({
   project: Project;
   index: number;
 }) {
-  const reducedMotion = useReducedMotion();
-  const [active, setActive] = useState(0);
-  const gradient = markGradient(index);
-
-  const [{ progress }, api] = useSpring(() => ({
-    progress: 0,
-    config: { tension: 220, friction: 26 },
-  }));
-
-  function select(next: number) {
-    if (next === active) return;
-    setActive(next);
-    api.start({ progress: next, immediate: reducedMotion });
-  }
-
-  const screenAOpacity = progress.to((p) => 1 - p);
-  const screenBOpacity = progress;
+  const hasDesktopScreens = project.desktopScreens.length > 0;
+  const hasMobileScreens = project.hasMobile && project.mobileScreens.length > 0;
 
   return (
     <div>
@@ -83,64 +80,49 @@ export function CaseStudyDeviceShowcase({
       <div
         className={`relative mx-auto max-w-[640px] ${project.hasMobile ? "pb-14" : ""}`}
       >
-        {/* laptop -- shows screen A by default, crossfades to B */}
+        {/* laptop -- always the real desktop screenshots, cycling on their own */}
         <div className="rounded-t-xl border border-b-0 border-black/10 bg-[#1c1a17] p-2 shadow-[0_40px_80px_rgba(0,0,0,0.35)]">
           <div className="relative aspect-[16/10] overflow-hidden rounded-lg">
-            <animated.div
-              className="absolute inset-0"
-              style={{ opacity: screenAOpacity }}
-            >
-              <ScreenContent variant={0} gradient={gradient} />
-            </animated.div>
-            <animated.div
-              className="absolute inset-0"
-              style={{ opacity: screenBOpacity }}
-            >
-              <ScreenContent variant={1} gradient={gradient} />
-            </animated.div>
+            {hasDesktopScreens ? (
+              <DeviceCrossfade images={project.desktopScreens} />
+            ) : (
+              <div
+                className="flex h-full w-full items-center justify-center"
+                style={{ background: markGradient(index) }}
+              >
+                <span className="font-display text-paper/25 text-5xl">
+                  {initials(project.title)}
+                </span>
+              </div>
+            )}
           </div>
         </div>
         <div className="relative h-3 rounded-b-xl bg-gradient-to-b from-[#242019] to-[#151311]">
           <div className="absolute top-0 left-1/2 h-1 w-16 -translate-x-1/2 rounded-b-md bg-[#0a0908]" />
         </div>
 
-        {/* phone -- overlapping the laptop's corner, always the complementary screen.
-            Desktop-only builds (project.hasMobile: false) don't get one -- there's
-            no mobile app to honestly show a screen from. */}
+        {/* phone -- overlapping the laptop's corner, its own real mobile
+            screenshots. Desktop-only builds (project.hasMobile: false)
+            don't get one -- there's no mobile app to honestly show. */}
         {project.hasMobile ? (
           <div className="absolute -right-1 -bottom-6 w-[28%] max-w-[128px] min-w-[92px] rounded-[22px] border-4 border-[#1c1a17] bg-[#1c1a17] shadow-[0_30px_60px_rgba(0,0,0,0.4)]">
             <div className="relative aspect-[9/19.5] overflow-hidden rounded-[16px]">
-              <animated.div
-                className="absolute inset-0"
-                style={{ opacity: screenBOpacity }}
-              >
-                <ScreenContent variant={0} gradient={gradient} />
-              </animated.div>
-              <animated.div
-                className="absolute inset-0"
-                style={{ opacity: screenAOpacity }}
-              >
-                <ScreenContent variant={1} gradient={gradient} />
-              </animated.div>
+              {hasMobileScreens ? (
+                <DeviceCrossfade images={project.mobileScreens} />
+              ) : (
+                <div
+                  className="flex h-full w-full items-center justify-center"
+                  style={{ background: markGradient(index + 1) }}
+                >
+                  <span className="font-display text-paper/25 text-2xl">
+                    {initials(project.title)}
+                  </span>
+                </div>
+              )}
               <div className="absolute top-1.5 left-1/2 h-2.5 w-10 -translate-x-1/2 rounded-full bg-[#0a0908]" />
             </div>
           </div>
         ) : null}
-      </div>
-
-      <div className="flex justify-center gap-2">
-        {Array.from({ length: SCREEN_COUNT }).map((_, i) => (
-          <button
-            key={i}
-            type="button"
-            onClick={() => select(i)}
-            aria-label={`Show screen ${i + 1}`}
-            aria-pressed={active === i}
-            className={`h-1.5 rounded-full transition-all duration-300 ${
-              active === i ? "bg-ember w-6" : "w-1.5 bg-[var(--border-subtle)]"
-            }`}
-          />
-        ))}
       </div>
     </div>
   );
